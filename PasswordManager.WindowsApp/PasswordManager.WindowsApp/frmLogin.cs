@@ -9,7 +9,8 @@ namespace PasswordManager.WindowsApp
     {
 
 
-        Utils utilClass = new Utils();
+        dataLogin utilClass = new dataLogin();
+
 
 
         //on start up of the application
@@ -17,7 +18,6 @@ namespace PasswordManager.WindowsApp
         {
 
             //set database status for database
-
             InitializeComponent();
             if (utilClass.databaseCheck() == true)
             {

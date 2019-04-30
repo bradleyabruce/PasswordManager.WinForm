@@ -8,6 +8,14 @@ namespace PasswordManager.WindowsApp
 {
     static class Program
     {
+
+        public static class MyStaticValues
+        {
+            public static int userID  { get; set; }
+        }
+
+
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -40,9 +48,7 @@ namespace PasswordManager.WindowsApp
             else
             {
                 Application.OpenForms[0].FormClosed += FormClosed;
-            }
-
-            
+            }       
 
         }
 

@@ -5,7 +5,7 @@ using System.IO;
 
 namespace PasswordManager.WindowsApp.DAO
 {
-    class Utils
+    class dataLogin
     {
 
         //this class checks the sql database and returns true if the server is online and false if not  
@@ -96,7 +96,8 @@ namespace PasswordManager.WindowsApp.DAO
                     //return the userID of the username and password conbination
                     while (reader.Read())
                     {
-                        userID = (String.Format("{0}, {1}", reader["UserID"], reader["UserLoginPassword"]));     
+                        //userID = (String.Format("{0}, {1}", reader["UserID"], reader["UserLoginPassword"]));
+                        userID = (String.Format("{0}", reader["UserID"]));
 
                     }
 
@@ -117,6 +118,9 @@ namespace PasswordManager.WindowsApp.DAO
             }
 
             //everything went well
+            //store user ID in global spot
+            //return true   
+            Program.MyStaticValues.userID = int.Parse(userID);
             return true;
         }
 
