@@ -1,6 +1,6 @@
 ﻿namespace PasswordManager.WindowsApp
 {
-    partial class Form1
+    partial class frmLogin
     {
         /// <summary>
         /// Required designer variable.
@@ -28,8 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmLogin));
             this.lblDatabaseStatus = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.lblError = new System.Windows.Forms.Label();
             this.btnLogin = new System.Windows.Forms.Button();
             this.lblPassword = new System.Windows.Forms.Label();
             this.tbPassword = new System.Windows.Forms.TextBox();
@@ -49,6 +51,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.lblError);
             this.panel1.Controls.Add(this.btnLogin);
             this.panel1.Controls.Add(this.lblPassword);
             this.panel1.Controls.Add(this.tbPassword);
@@ -58,6 +61,15 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(250, 201);
             this.panel1.TabIndex = 1;
+            // 
+            // lblError
+            // 
+            this.lblError.AutoSize = true;
+            this.lblError.Location = new System.Drawing.Point(88, 159);
+            this.lblError.Name = "lblError";
+            this.lblError.Size = new System.Drawing.Size(0, 13);
+            this.lblError.TabIndex = 5;
+            this.lblError.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // btnLogin
             // 
@@ -74,9 +86,9 @@
             this.lblPassword.AutoSize = true;
             this.lblPassword.Location = new System.Drawing.Point(4, 94);
             this.lblPassword.Name = "lblPassword";
-            this.lblPassword.Size = new System.Drawing.Size(53, 13);
+            this.lblPassword.Size = new System.Drawing.Size(56, 13);
             this.lblPassword.TabIndex = 3;
-            this.lblPassword.Text = "Password";
+            this.lblPassword.Text = "Password:";
             // 
             // tbPassword
             // 
@@ -91,9 +103,9 @@
             this.lblUsername.AutoSize = true;
             this.lblUsername.Location = new System.Drawing.Point(4, 21);
             this.lblUsername.Name = "lblUsername";
-            this.lblUsername.Size = new System.Drawing.Size(57, 13);
+            this.lblUsername.Size = new System.Drawing.Size(60, 13);
             this.lblUsername.TabIndex = 1;
-            this.lblUsername.Text = "UserName";
+            this.lblUsername.Text = "UserName:";
             // 
             // tbUsername
             // 
@@ -111,21 +123,22 @@
             this.lblStatus.TabIndex = 3;
             this.lblStatus.Text = "Test";
             // 
-            // Form1
+            // frmLogin
             // 
+            this.AcceptButton = this.btnLogin;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(275, 232);
             this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.lblDatabaseStatus);
-            this.Name = "Form1";
-            this.Text = "frmLogin";
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Name = "frmLogin";
+            this.Text = "Password Manager";
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion
@@ -138,6 +151,7 @@
         private System.Windows.Forms.Label lblUsername;
         private System.Windows.Forms.TextBox tbUsername;
         private System.Windows.Forms.Label lblStatus;
+        private System.Windows.Forms.Label lblError;
     }
 }
 

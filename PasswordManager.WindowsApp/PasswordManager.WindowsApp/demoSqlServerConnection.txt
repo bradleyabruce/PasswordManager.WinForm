@@ -1,1 +1,0 @@
-user id= Sql Username ; password= Sql Password ; server=tcp: Sql ip Address, Sql port number ; Trusted_Connection=False; database= Sql Database; connection timeout=10
