@@ -1,0 +1,2 @@
+#Ignore txt file with sql server connnection string
+sqlServerConnection.txt
