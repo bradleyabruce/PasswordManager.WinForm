@@ -1,12 +1,7 @@
 ﻿using PasswordManager.WindowsApp.DAO;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Security.Cryptography;
 using System.Windows.Forms;
 
 namespace PasswordManager.WindowsApp
@@ -136,6 +131,49 @@ namespace PasswordManager.WindowsApp
 
 
 
+
+        }
+
+        private void BtnGenerate_Click(object sender, EventArgs e)
+        {
+
+
+
+            string token1 = GenerateToken(10);
+            //string token2 = GenerateToken(10);
+            //string token3 = GenerateToken(10);
+
+            //string password = token1 + "-" + token2 + "-" + token3;
+            tbWebsitePassword.Text = token1;
+        }
+
+
+        public string GenerateToken(int length)
+        {
+            RNGCryptoServiceProvider cryptRNG = new RNGCryptoServiceProvider();
+            byte[] tokenBuffer = new byte[length];
+            cryptRNG.GetBytes(tokenBuffer);
+            string randomString =  Convert.ToBase64String(tokenBuffer);
+
+            char[] characters = randomString.ToCharArray();
+            List<char> finalChars = new List<char>();
+            string password = "";
+
+           
+            for (int i = 0; i < 5; i++)
+            {
+                Random rand = new Random();
+                int index = rand.Next(0, characters.Length+1);
+                
+
+                finalChars.Add(characters[index]);
+            }
+            
+            for(int i = 0; i<finalChars.Count; i++)
+            {
+                password += finalChars[i];
+            }
+            return password;
 
         }
     }

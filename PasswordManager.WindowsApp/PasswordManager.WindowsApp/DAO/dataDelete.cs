@@ -38,8 +38,6 @@ namespace PasswordManager.WindowsApp.DAO
             }
 
 
-
-
             string query = "DELETE FROM [dbo].[tWebsiteDomains] WHERE WebsiteDomainID= @DomainID; DELETE FROM [dbo].[tWebsitePasswords] WHERE WebsitePasswordID= @PasswordID; DELETE FROM [dbo].[tWebsiteUsername] WHERE WebsiteUsernameID= @WebsiteUsernameID; DELETE FROM [dbo].[tEntries] WHERE EntryID= @entryID";
             
             

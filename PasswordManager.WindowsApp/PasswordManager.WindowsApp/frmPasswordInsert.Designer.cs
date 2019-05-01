@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
+            this.lblError = new System.Windows.Forms.Label();
             this.btnAdd = new System.Windows.Forms.Button();
             this.cbCategory = new System.Windows.Forms.ComboBox();
             this.lblCategory = new System.Windows.Forms.Label();
@@ -42,12 +43,13 @@
             this.btnBack = new System.Windows.Forms.Button();
             this.lblStatus = new System.Windows.Forms.Label();
             this.lblServerStatus = new System.Windows.Forms.Label();
-            this.lblError = new System.Windows.Forms.Label();
+            this.btnGenerate = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.btnGenerate);
             this.panel1.Controls.Add(this.lblError);
             this.panel1.Controls.Add(this.btnAdd);
             this.panel1.Controls.Add(this.cbCategory);
@@ -63,6 +65,16 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(387, 304);
             this.panel1.TabIndex = 0;
+            // 
+            // lblError
+            // 
+            this.lblError.AutoSize = true;
+            this.lblError.Location = new System.Drawing.Point(73, 251);
+            this.lblError.Name = "lblError";
+            this.lblError.Size = new System.Drawing.Size(242, 13);
+            this.lblError.TabIndex = 10;
+            this.lblError.Text = "Domain, Username, and Password are all required";
+            this.lblError.Visible = false;
             // 
             // btnAdd
             // 
@@ -94,7 +106,7 @@
             // chPassword
             // 
             this.chPassword.AutoSize = true;
-            this.chPassword.Location = new System.Drawing.Point(281, 130);
+            this.chPassword.Location = new System.Drawing.Point(183, 133);
             this.chPassword.Name = "chPassword";
             this.chPassword.Size = new System.Drawing.Size(102, 17);
             this.chPassword.TabIndex = 6;
@@ -107,7 +119,7 @@
             this.tbWebsitePassword.Location = new System.Drawing.Point(4, 150);
             this.tbWebsitePassword.Name = "tbWebsitePassword";
             this.tbWebsitePassword.PasswordChar = '*';
-            this.tbWebsitePassword.Size = new System.Drawing.Size(380, 20);
+            this.tbWebsitePassword.Size = new System.Drawing.Size(281, 20);
             this.tbWebsitePassword.TabIndex = 5;
             // 
             // lblPassword
@@ -178,15 +190,15 @@
             this.lblServerStatus.Size = new System.Drawing.Size(0, 13);
             this.lblServerStatus.TabIndex = 3;
             // 
-            // lblError
+            // btnGenerate
             // 
-            this.lblError.AutoSize = true;
-            this.lblError.Location = new System.Drawing.Point(73, 251);
-            this.lblError.Name = "lblError";
-            this.lblError.Size = new System.Drawing.Size(242, 13);
-            this.lblError.TabIndex = 10;
-            this.lblError.Text = "Domain, Username, and Password are all required";
-            this.lblError.Visible = false;
+            this.btnGenerate.Location = new System.Drawing.Point(291, 148);
+            this.btnGenerate.Name = "btnGenerate";
+            this.btnGenerate.Size = new System.Drawing.Size(96, 23);
+            this.btnGenerate.TabIndex = 11;
+            this.btnGenerate.Text = "Generate";
+            this.btnGenerate.UseVisualStyleBackColor = true;
+            this.btnGenerate.Click += new System.EventHandler(this.BtnGenerate_Click);
             // 
             // frmPasswordInsert
             // 
@@ -223,5 +235,6 @@
         private System.Windows.Forms.Label lblStatus;
         private System.Windows.Forms.Label lblServerStatus;
         private System.Windows.Forms.Label lblError;
+        private System.Windows.Forms.Button btnGenerate;
     }
 }
