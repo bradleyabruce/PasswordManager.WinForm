@@ -44,7 +44,7 @@
             this.lblResultPassword = new System.Windows.Forms.Label();
             this.tbResultUsername = new System.Windows.Forms.TextBox();
             this.lblResultUsername = new System.Windows.Forms.Label();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.comboCategoryResult = new System.Windows.Forms.ComboBox();
             this.lblResultCategory = new System.Windows.Forms.Label();
             this.btnCopyPassword = new System.Windows.Forms.Button();
             this.btnCopyEmail = new System.Windows.Forms.Button();
@@ -73,6 +73,7 @@
             this.btnAdd.TabIndex = 12;
             this.btnAdd.Text = "Add";
             this.btnAdd.UseVisualStyleBackColor = true;
+            this.btnAdd.Click += new System.EventHandler(this.BtnAdd_Click);
             // 
             // pnlList
             // 
@@ -140,7 +141,7 @@
             this.pnlResults.Controls.Add(this.lblResultPassword);
             this.pnlResults.Controls.Add(this.tbResultUsername);
             this.pnlResults.Controls.Add(this.lblResultUsername);
-            this.pnlResults.Controls.Add(this.comboBox1);
+            this.pnlResults.Controls.Add(this.comboCategoryResult);
             this.pnlResults.Controls.Add(this.lblResultCategory);
             this.pnlResults.Controls.Add(this.btnCopyPassword);
             this.pnlResults.Controls.Add(this.btnCopyEmail);
@@ -211,13 +212,13 @@
             this.lblResultUsername.TabIndex = 5;
             this.lblResultUsername.Text = "Username:";
             // 
-            // comboBox1
+            // comboCategoryResult
             // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(98, 122);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(235, 21);
-            this.comboBox1.TabIndex = 4;
+            this.comboCategoryResult.FormattingEnabled = true;
+            this.comboCategoryResult.Location = new System.Drawing.Point(98, 122);
+            this.comboCategoryResult.Name = "comboCategoryResult";
+            this.comboCategoryResult.Size = new System.Drawing.Size(235, 21);
+            this.comboCategoryResult.TabIndex = 4;
             // 
             // lblResultCategory
             // 
@@ -281,7 +282,7 @@
         private System.Windows.Forms.Label lblResultPassword;
         private System.Windows.Forms.TextBox tbResultUsername;
         private System.Windows.Forms.Label lblResultUsername;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ComboBox comboCategoryResult;
         private System.Windows.Forms.Label lblResultCategory;
         private System.Windows.Forms.Button btnCopyPassword;
         private System.Windows.Forms.Button btnCopyEmail;

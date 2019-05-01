@@ -79,15 +79,14 @@ namespace PasswordManager.WindowsApp.DAO
             //if user is searching for all entries 
             if (CategoryID == 0)
             {
-                queryString = "SELECT dbo.tWebsiteDomains.WebsiteDomain, dbo.tEntries.WebsiteUsernameID FROM dbo.tEntries INNER JOIN dbo.tWebsiteDomains ON dbo.tEntries.WebsiteDomainID = dbo.tWebsiteDomains.WebsiteDomainID";
+                queryString = "SELECT dbo.tWebsiteDomains.WebsiteDomain, dbo.tWebsiteUsername.WebsiteUsername, dbo.tEntries.EntryID FROM dbo.tEntries INNER JOIN dbo.tWebsiteDomains ON dbo.tEntries.WebsiteDomainID = dbo.tWebsiteDomains.WebsiteDomainID INNER JOIN dbo.tWebsiteUsername ON dbo.tEntries.WebsiteUsernameID = dbo.tWebsiteUsername.WebsiteUsernameID";
             }
             //if user is searching for specific category
             else
             {
-                queryString = "SELECT dbo.tWebsiteDomains.WebsiteDomain, dbo.tEntries.WebsiteUsernameID FROM dbo.tEntries INNER JOIN dbo.tWebsiteDomains ON dbo.tEntries.WebsiteDomainID = dbo.tWebsiteDomains.WebsiteDomainID INNER JOIN dbo.tCategories ON dbo.tEntries.CategoryID = dbo.tCategories.CategoryID WHERE(dbo.tCategories.CategoryID =" + CategoryID + ")";
+                queryString = "SELECT dbo.tWebsiteDomains.WebsiteDomain, dbo.tWebsiteUsername.WebsiteUsername, dbo.tEntries.EntryID FROM dbo.tEntries INNER JOIN dbo.tWebsiteDomains ON dbo.tEntries.WebsiteDomainID = dbo.tWebsiteDomains.WebsiteDomainID INNER JOIN dbo.tWebsiteUsername ON dbo.tEntries.WebsiteUsernameID = dbo.tWebsiteUsername.WebsiteUsernameID WHERE(dbo.tEntries.CategoryID =" + CategoryID + ")";
             }
             
-
 
             //pass values to sql server
             using (SqlConnection conn = new SqlConnection(dl.getConnectionString()))
@@ -105,7 +104,7 @@ namespace PasswordManager.WindowsApp.DAO
                     while (reader.Read())
                     {
                         //get entries and websiteUsernameIDs
-                        entries.Add(String.Format("{0}, {1}", reader["WebsiteDomain"], reader["WebsiteUsernameID"]));
+                        entries.Add(String.Format("{0}, {1}, {2}", reader["WebsiteDomain"], reader["WebsiteUsername"], reader["EntryID"]));
 
                     }
 
@@ -134,64 +133,15 @@ namespace PasswordManager.WindowsApp.DAO
 
 
 
-        public string getWebsiteUsername(string websiteUsernameID)
-        {
-
-            //string to return
-            string websiteUsername = "";
-
-            //query to pass to database
-            string queryString = "SELECT [WebsiteUsername] FROM[PasswordManager].[dbo].[tWebsiteUsername] WHERE [WebsiteUsernameID] = " + websiteUsernameID + "";
-
-            //pass values to sql server
-            using (SqlConnection conn = new SqlConnection(dl.getConnectionString()))
-            {
-
-                SqlCommand command = new SqlCommand(queryString, conn);
-                conn.Open();
-
-                //query database
-                SqlDataReader reader = command.ExecuteReader();
-                try
-                {
-
-                    //return the userID of the username and password conbination
-                    while (reader.Read())
-                    {
-                        websiteUsername = String.Format("{0}", reader["WebsiteUsername"]);
-
-                    }
-
-                    //if nothing is returned, then there must not be a match and the username / password does not exist
-                    if (websiteUsername == "")
-                    {
-
-                    }
-
-                }
-
-                //something went wrong
-                catch (Exception e)
-                {
-
-                }
-
-            }
-
-            //everything went well
-            return websiteUsername;
-
-        }
 
 
-
-        public string getWebsitePassword(string userID, string websiteDomainName, string websiteUserName)
+        public string getWebsitePassword(string entryID)
         {
 
             string websitePassword = "";
 
             //query to pass to database
-            string queryString = "SELECT dbo.tWebsitePasswords.WebsitePassword FROM dbo.tEntries INNER JOIN dbo.tUsers ON dbo.tEntries.UserID = dbo.tUsers.UserID INNER JOIN dbo.tWebsiteDomains ON dbo.tEntries.WebsiteDomainID = dbo.tWebsiteDomains.WebsiteDomainID INNER JOIN dbo.tWebsiteUsername ON dbo.tEntries.WebsiteUsernameID = dbo.tWebsiteUsername.WebsiteUsernameID INNER JOIN dbo.tWebsitePasswords ON dbo.tEntries.WebsitePasswordID = dbo.tWebsitePasswords.WebsitePasswordID WHERE(dbo.tUsers.UserID = "+ userID +") AND(dbo.tWebsiteDomains.WebsiteDomain = '" + websiteDomainName +"') AND(dbo.tWebsiteUsername.WebsiteUsername = '" + websiteUserName + "')";
+            string queryString = "SELECT dbo.tWebsitePasswords.WebsitePassword, dbo.tEntries.EntryID FROM dbo.tEntries INNER JOIN dbo.tWebsitePasswords ON dbo.tEntries.WebsitePasswordID = dbo.tWebsitePasswords.WebsitePasswordID WHERE(dbo.tEntries.EntryID =" + entryID + ")";
 
             //pass values to sql server
             using (SqlConnection conn = new SqlConnection(dl.getConnectionString()))
@@ -231,6 +181,58 @@ namespace PasswordManager.WindowsApp.DAO
             //everything went well
             return websitePassword;
 
+
+        }
+
+
+
+        public int getEntryCategory(string entryID)
+        {
+
+            string stringCategoryID = "";
+            int CategoryID = 0;
+
+            //query to pass to database
+            string queryString = "SELECT CategoryID FROM dbo.tEntries WHERE(EntryID =" + entryID + ")";
+
+            //pass values to sql server
+            using (SqlConnection conn = new SqlConnection(dl.getConnectionString()))
+            {
+
+                SqlCommand command = new SqlCommand(queryString, conn);
+                conn.Open();
+
+                //query database
+                SqlDataReader reader = command.ExecuteReader();
+                try
+                {
+
+                    //return the userID of the username and password conbination
+                    while (reader.Read())
+                    {
+                        stringCategoryID = String.Format("{0}", reader["CategoryID"]);
+                        CategoryID = int.Parse(stringCategoryID);
+
+                    }
+
+                    //if nothing is returned, then there must not be a match and the username / password does not exist
+                    if (stringCategoryID == "")
+                    {
+
+                    }
+
+                }
+
+                //something went wrong
+                catch (Exception e)
+                {
+
+                }
+
+            }
+
+            //everything went well
+            return CategoryID;
 
 
 
