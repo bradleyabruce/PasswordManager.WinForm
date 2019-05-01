@@ -12,6 +12,7 @@ namespace PasswordManager.WindowsApp.DAO
     {
 
         dataLogin dl = new dataLogin();
+        dataDelete dd = new dataDelete();
 
 
 

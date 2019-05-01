@@ -16,6 +16,7 @@ namespace PasswordManager.WindowsApp
 
         dataLogin dl = new dataLogin();
         dataRetrieval dr = new dataRetrieval();
+        dataDelete dd = new dataDelete();
 
 
         //when the form is loaded, check status and load categories and entries
@@ -91,7 +92,7 @@ namespace PasswordManager.WindowsApp
             tbResultUsername.Text = websiteUsername;
 
             //set current category combo box
-            comboCategoryResult.DataSource = comboCategorySort;
+            comboCategoryResult.DataSource = dr.getCategories();
             comboCategoryResult.SelectedIndex = dr.getEntryCategory(entryID);
 
         }
@@ -138,6 +139,41 @@ namespace PasswordManager.WindowsApp
 
             //close login form
             this.Close();
+        }
+
+        //when the delete button is pressed
+        private void BtnDelete_Click(object sender, EventArgs e)
+        {
+
+            //get entry ID from selected text box
+
+            string entryID = "";
+
+            //get input from textbox
+            String selectedEntry = lbWebsiteList.SelectedItem.ToString();
+
+            //split string
+            List<String> websiteArray = selectedEntry.Split(',').ToList<string>();
+
+            entryID = websiteArray[2].Substring(1);
+
+
+            dd.deleteEntry(entryID);
+
+            int index = comboCategorySort.SelectedIndex;
+            lbWebsiteList.DataSource = dr.getEntries(index);
+
+
+            if(lbWebsiteList.Items.Count == 0)
+            {
+                pnlList.Enabled = false;
+                pnlResults.Enabled = false;
+                tbResultPassword.Text = "";
+                tbResultUsername.Text = "";
+                comboCategoryResult.DataSource = null;
+            }
+
+
         }
     }
 }

@@ -111,13 +111,22 @@ namespace PasswordManager.WindowsApp
                     {
                         lblPassword.ForeColor = System.Drawing.Color.Black;               
 
+                        //get IDs from inserted data
                         domainID = di.insertWebsiteDomain(domain);
                         usernameID = di.insertWebsiteUsername(username);
                         passwordID = di.insertWebsitePassword(password);
                         categoryID = Convert.ToInt32(cbCategory.SelectedIndex);
 
                         lblError.Visible = true;
+
+                        //insert into entry table
                         lblError.Text = di.insertEntry(userID, domainID, usernameID, passwordID, categoryID).ToString();
+
+                        //reset form
+                        tbWebsiteDomain.Text = null;
+                        tbWebsitePassword.Text = null;
+                        tbWebsiteUsername.Text = null;
+                        cbCategory.SelectedIndex = 0;
 
                     }
                 }
