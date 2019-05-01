@@ -22,6 +22,8 @@ namespace PasswordManager.WindowsApp
         {
 
             InitializeComponent();
+
+            //check database status
             if (dl.databaseCheck() == true)
             {
                 lblServerStatus.Text = " Online";
@@ -40,6 +42,7 @@ namespace PasswordManager.WindowsApp
             //load entries 
             lbWebsiteList.DataSource = dr.getEntries(0);
 
+
         }
 
 
@@ -47,6 +50,57 @@ namespace PasswordManager.WindowsApp
         {
             int index = comboCategorySort.SelectedIndex;
             lbWebsiteList.DataSource = dr.getEntries(index);
+        }
+
+
+        private void LbWebsiteList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            //get website and WebsiteUsernameID
+
+            string websiteDomain = "";
+            string websiteUsernameID = "";
+
+            //get input from textbox
+            String selectedWebsite = lbWebsiteList.SelectedItem.ToString();
+
+            //split string
+            List<String> websiteArray = selectedWebsite.Split(',').ToList<string>();
+
+            websiteDomain = websiteArray[0];
+            websiteUsernameID = websiteArray[1].Substring(1);
+
+            //pass those values to retrieve username and password
+
+            string userID = Program.MyStaticValues.userID.ToString();
+            string websiteUserName = dr.getWebsiteUsername(websiteUsernameID);
+
+            tbResultUsername.Text = websiteUserName;
+            tbResultPassword.Text = dr.getWebsitePassword(Program.MyStaticValues.userID.ToString(), websiteDomain, websiteUserName);
+            
+        }
+
+        private void CbPassword_CheckedChanged(object sender, EventArgs e)
+        {
+            if(cbPassword.Checked == true)
+            {
+                tbResultPassword.PasswordChar = '\0';
+            }
+            else
+            {
+                tbResultPassword.PasswordChar = '*';
+            }
+
+            
+        }
+
+        private void BtnCopyEmail_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetText(tbResultUsername.Text);
+        }
+
+        private void BtnCopyPassword_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetText(tbResultPassword.Text);
         }
     }
 }

@@ -92,6 +92,7 @@
             this.lbWebsiteList.Name = "lbWebsiteList";
             this.lbWebsiteList.Size = new System.Drawing.Size(335, 472);
             this.lbWebsiteList.TabIndex = 2;
+            this.lbWebsiteList.SelectedIndexChanged += new System.EventHandler(this.LbWebsiteList_SelectedIndexChanged);
             // 
             // comboCategorySort
             // 
@@ -175,6 +176,7 @@
             this.cbPassword.TabIndex = 9;
             this.cbPassword.Text = "Show Password";
             this.cbPassword.UseVisualStyleBackColor = true;
+            this.cbPassword.CheckedChanged += new System.EventHandler(this.CbPassword_CheckedChanged);
             // 
             // tbResultPassword
             // 
@@ -234,6 +236,7 @@
             this.btnCopyPassword.TabIndex = 2;
             this.btnCopyPassword.Text = "Copy Password";
             this.btnCopyPassword.UseVisualStyleBackColor = true;
+            this.btnCopyPassword.Click += new System.EventHandler(this.BtnCopyPassword_Click);
             // 
             // btnCopyEmail
             // 
@@ -243,6 +246,7 @@
             this.btnCopyEmail.TabIndex = 1;
             this.btnCopyEmail.Text = "Copy Username";
             this.btnCopyEmail.UseVisualStyleBackColor = true;
+            this.btnCopyEmail.Click += new System.EventHandler(this.BtnCopyEmail_Click);
             // 
             // frmPasswordRetrieval
             // 

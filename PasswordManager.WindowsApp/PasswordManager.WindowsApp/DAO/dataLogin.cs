@@ -44,7 +44,7 @@ namespace PasswordManager.WindowsApp.DAO
             {
 
                 //change this file name to point to a different text file with database connection string  
-                string path = "..\\..\\..\\..\\sqlServerConnection.txt";
+                string path = "..\\..\\..\\sqlServerConnection.txt";
 
                 using (StreamReader sr = new StreamReader(path))
                 {
