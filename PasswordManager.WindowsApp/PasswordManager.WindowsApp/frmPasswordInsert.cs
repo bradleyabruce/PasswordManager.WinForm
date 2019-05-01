@@ -136,18 +136,13 @@ namespace PasswordManager.WindowsApp
 
         private void BtnGenerate_Click(object sender, EventArgs e)
         {
-
-
-
-            string token1 = GenerateToken(10);
-            //string token2 = GenerateToken(10);
-            //string token3 = GenerateToken(10);
-
-            //string password = token1 + "-" + token2 + "-" + token3;
-            tbWebsitePassword.Text = token1;
+            tbWebsitePassword.Text = GenerateToken(50) + "-" + GenerateToken(50) + "-" + GenerateToken(50);
         }
 
 
+
+
+        //generates a random string consisting of 5 characters
         public string GenerateToken(int length)
         {
             RNGCryptoServiceProvider cryptRNG = new RNGCryptoServiceProvider();
@@ -158,12 +153,12 @@ namespace PasswordManager.WindowsApp
             char[] characters = randomString.ToCharArray();
             List<char> finalChars = new List<char>();
             string password = "";
+            Random rand = new Random();
 
-           
             for (int i = 0; i < 5; i++)
             {
-                Random rand = new Random();
-                int index = rand.Next(0, characters.Length+1);
+                
+                int index = rand.Next(0, characters.Length);
                 
 
                 finalChars.Add(characters[index]);
