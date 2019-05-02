@@ -17,6 +17,7 @@ namespace PasswordManager.WindowsApp
         dataLogin dl = new dataLogin();
         dataRetrieval dr = new dataRetrieval();
         dataDelete dd = new dataDelete();
+        dataUpdate du = new dataUpdate();
 
 
         //when the form is loaded, check status and load categories and entries
@@ -51,6 +52,11 @@ namespace PasswordManager.WindowsApp
                 pnlResults.Enabled = false;
                 pnlList.Enabled = false;
             }
+
+
+            lblUsernameSaved.Text = "";
+            lblPasswordSaved.Text = "";
+            lblCategorySaved.Text = "";
 
         }
 
@@ -94,6 +100,10 @@ namespace PasswordManager.WindowsApp
             //set current category combo box
             comboCategoryResult.DataSource = dr.getCategories();
             comboCategoryResult.SelectedIndex = dr.getEntryCategory(entryID);
+
+            lblUsernameSaved.Text = "";
+            lblPasswordSaved.Text = "";
+            lblCategorySaved.Text = "";
 
         }
 
@@ -149,10 +159,10 @@ namespace PasswordManager.WindowsApp
 
             string entryID = "";
 
-            //get input from textbox
+            //get listbox entry data
             String selectedEntry = lbWebsiteList.SelectedItem.ToString();
 
-            //split string
+            //split string to get entry ID
             List<String> websiteArray = selectedEntry.Split(',').ToList<string>();
 
             entryID = websiteArray[2].Substring(1);
@@ -173,6 +183,126 @@ namespace PasswordManager.WindowsApp
                 comboCategoryResult.DataSource = null;
             }
 
+
+        }
+
+
+        //when the update button is pressed
+        private void BtnUpdate_Click(object sender, EventArgs e)
+        {
+
+            string entryID = "";
+
+            string databasePassword = "";
+            string databaseUsername = "";
+            string databaseCategoryID = "";
+
+            string databasePasswordID = "";
+            string databaseUsernameID = "";
+
+            //get current values
+            string currentPassword = tbResultPassword.Text;
+            string currentUsername = tbResultUsername.Text;
+            string currentCategoryID = comboCategoryResult.SelectedIndex.ToString();
+
+
+
+            //get listbox entry data
+            String selectedEntry = lbWebsiteList.SelectedItem.ToString();
+
+            //split string to get entry ID
+            List<String> websiteArray = selectedEntry.Split(',').ToList<string>();
+
+            entryID = websiteArray[2].Substring(1);
+
+
+            //compare existing values in database with values from app to see what needs to be changed
+            List<string> valuesToDelete = du.getValuesToUpdate(entryID);
+            for (int i = 0; i < valuesToDelete.Count; i++)
+            {
+                if (i == 0)
+                {
+                    databasePassword = valuesToDelete.ElementAt(i);
+                }
+                if (i == 1)
+                {
+                    databaseUsername = valuesToDelete.ElementAt(i);
+                }
+                if (i == 2)
+                {
+                    databasePasswordID = valuesToDelete.ElementAt(i);
+                }
+                if (i == 3)
+                {
+                    databaseUsernameID = valuesToDelete.ElementAt(i);
+                }
+                if (i == 4)
+                {
+                    databaseCategoryID = valuesToDelete.ElementAt(i);
+                }
+            }
+
+            
+            //if passwords are different
+            if(databasePassword != currentPassword)
+            {
+                du.updatePassword(databasePasswordID, currentPassword);
+            }
+
+                //if usernames are different
+            if(databaseUsername != currentUsername)
+            {
+                du.updateUsername(databaseUsernameID, currentUsername);
+            }
+            
+            //if categoryIDs are different
+            if(databaseCategoryID != currentCategoryID)
+            {
+                du.updateCategoryID(entryID, currentCategoryID);
+            }
+
+
+            //get index of currently selected entry
+            int entryIndex = lbWebsiteList.SelectedIndex;
+
+            //reload datasource
+            int categoryIndex = comboCategorySort.SelectedIndex;
+            lbWebsiteList.DataSource = dr.getEntries(categoryIndex);
+
+            //set selected item the same as before
+            lbWebsiteList.SelectedIndex = entryIndex;
+
+            lblUsernameSaved.Text = "";
+            lblPasswordSaved.Text = "";
+            lblCategorySaved.Text = "";
+        }
+
+        //when username text box is changed
+        private void TbResultUsername_TextChanged(object sender, EventArgs e)
+        {
+            lblUsernameSaved.Text = "Not Yet Saved!";
+            lblUsernameSaved.ForeColor = System.Drawing.Color.Red;
+        }
+
+        private void TbResultPassword_TextChanged(object sender, EventArgs e)
+        {
+            lblPasswordSaved.Text = "Not Yet Saved!";
+            lblPasswordSaved.ForeColor = System.Drawing.Color.Red;
+        }
+
+        private void ComboCategoryResult_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            lblCategorySaved.Text = "Not Yet Saved!";
+            lblCategorySaved.ForeColor = System.Drawing.Color.Red;
+        }
+
+        private void PnlResults_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void LblCategorySaved_Click(object sender, EventArgs e)
+        {
 
         }
     }

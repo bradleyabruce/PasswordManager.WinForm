@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.pnlMain = new System.Windows.Forms.Panel();
+            this.btnSettings = new System.Windows.Forms.Button();
             this.btnAdd = new System.Windows.Forms.Button();
             this.pnlList = new System.Windows.Forms.Panel();
             this.lbWebsiteList = new System.Windows.Forms.ListBox();
@@ -48,6 +49,9 @@
             this.lblResultCategory = new System.Windows.Forms.Label();
             this.btnCopyPassword = new System.Windows.Forms.Button();
             this.btnCopyEmail = new System.Windows.Forms.Button();
+            this.lblUsernameSaved = new System.Windows.Forms.Label();
+            this.lblPasswordSaved = new System.Windows.Forms.Label();
+            this.lblCategorySaved = new System.Windows.Forms.Label();
             this.pnlMain.SuspendLayout();
             this.pnlList.SuspendLayout();
             this.pnlResults.SuspendLayout();
@@ -55,6 +59,7 @@
             // 
             // pnlMain
             // 
+            this.pnlMain.Controls.Add(this.btnSettings);
             this.pnlMain.Controls.Add(this.btnAdd);
             this.pnlMain.Controls.Add(this.pnlList);
             this.pnlMain.Controls.Add(this.lblServerStatus);
@@ -65,13 +70,22 @@
             this.pnlMain.Size = new System.Drawing.Size(685, 561);
             this.pnlMain.TabIndex = 0;
             // 
+            // btnSettings
+            // 
+            this.btnSettings.Location = new System.Drawing.Point(586, 7);
+            this.btnSettings.Name = "btnSettings";
+            this.btnSettings.Size = new System.Drawing.Size(96, 23);
+            this.btnSettings.TabIndex = 13;
+            this.btnSettings.Text = "Settings";
+            this.btnSettings.UseVisualStyleBackColor = true;
+            // 
             // btnAdd
             // 
-            this.btnAdd.Location = new System.Drawing.Point(509, 6);
+            this.btnAdd.Location = new System.Drawing.Point(484, 7);
             this.btnAdd.Name = "btnAdd";
-            this.btnAdd.Size = new System.Drawing.Size(165, 23);
+            this.btnAdd.Size = new System.Drawing.Size(96, 23);
             this.btnAdd.TabIndex = 12;
-            this.btnAdd.Text = "Add";
+            this.btnAdd.Text = "Add Password";
             this.btnAdd.UseVisualStyleBackColor = true;
             this.btnAdd.Click += new System.EventHandler(this.BtnAdd_Click);
             // 
@@ -134,6 +148,9 @@
             // pnlResults
             // 
             this.pnlResults.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pnlResults.Controls.Add(this.lblCategorySaved);
+            this.pnlResults.Controls.Add(this.lblPasswordSaved);
+            this.pnlResults.Controls.Add(this.lblUsernameSaved);
             this.pnlResults.Controls.Add(this.btnDelete);
             this.pnlResults.Controls.Add(this.btnUpdate);
             this.pnlResults.Controls.Add(this.cbPassword);
@@ -149,6 +166,7 @@
             this.pnlResults.Name = "pnlResults";
             this.pnlResults.Size = new System.Drawing.Size(338, 500);
             this.pnlResults.TabIndex = 1;
+            this.pnlResults.Paint += new System.Windows.Forms.PaintEventHandler(this.PnlResults_Paint);
             // 
             // btnDelete
             // 
@@ -168,6 +186,7 @@
             this.btnUpdate.TabIndex = 10;
             this.btnUpdate.Text = "Update";
             this.btnUpdate.UseVisualStyleBackColor = true;
+            this.btnUpdate.Click += new System.EventHandler(this.BtnUpdate_Click);
             // 
             // cbPassword
             // 
@@ -187,6 +206,7 @@
             this.tbResultPassword.PasswordChar = '*';
             this.tbResultPassword.Size = new System.Drawing.Size(330, 20);
             this.tbResultPassword.TabIndex = 8;
+            this.tbResultPassword.TextChanged += new System.EventHandler(this.TbResultPassword_TextChanged);
             // 
             // lblResultPassword
             // 
@@ -203,6 +223,7 @@
             this.tbResultUsername.Name = "tbResultUsername";
             this.tbResultUsername.Size = new System.Drawing.Size(330, 20);
             this.tbResultUsername.TabIndex = 6;
+            this.tbResultUsername.TextChanged += new System.EventHandler(this.TbResultUsername_TextChanged);
             // 
             // lblResultUsername
             // 
@@ -218,8 +239,9 @@
             this.comboCategoryResult.FormattingEnabled = true;
             this.comboCategoryResult.Location = new System.Drawing.Point(98, 122);
             this.comboCategoryResult.Name = "comboCategoryResult";
-            this.comboCategoryResult.Size = new System.Drawing.Size(235, 21);
+            this.comboCategoryResult.Size = new System.Drawing.Size(140, 21);
             this.comboCategoryResult.TabIndex = 4;
+            this.comboCategoryResult.SelectedIndexChanged += new System.EventHandler(this.ComboCategoryResult_SelectedIndexChanged);
             // 
             // lblResultCategory
             // 
@@ -249,6 +271,31 @@
             this.btnCopyEmail.Text = "Copy Username";
             this.btnCopyEmail.UseVisualStyleBackColor = true;
             this.btnCopyEmail.Click += new System.EventHandler(this.BtnCopyEmail_Click);
+            // 
+            // lblUsernameSaved
+            // 
+            this.lblUsernameSaved.AutoSize = true;
+            this.lblUsernameSaved.Location = new System.Drawing.Point(71, 33);
+            this.lblUsernameSaved.Name = "lblUsernameSaved";
+            this.lblUsernameSaved.Size = new System.Drawing.Size(0, 13);
+            this.lblUsernameSaved.TabIndex = 12;
+            // 
+            // lblPasswordSaved
+            // 
+            this.lblPasswordSaved.AutoSize = true;
+            this.lblPasswordSaved.Location = new System.Drawing.Point(69, 76);
+            this.lblPasswordSaved.Name = "lblPasswordSaved";
+            this.lblPasswordSaved.Size = new System.Drawing.Size(0, 13);
+            this.lblPasswordSaved.TabIndex = 13;
+            // 
+            // lblCategorySaved
+            // 
+            this.lblCategorySaved.AutoSize = true;
+            this.lblCategorySaved.Location = new System.Drawing.Point(244, 125);
+            this.lblCategorySaved.Name = "lblCategorySaved";
+            this.lblCategorySaved.Size = new System.Drawing.Size(0, 13);
+            this.lblCategorySaved.TabIndex = 14;
+            this.lblCategorySaved.Click += new System.EventHandler(this.LblCategorySaved_Click);
             // 
             // frmPasswordRetrieval
             // 
@@ -290,5 +337,9 @@
         private System.Windows.Forms.Button btnDelete;
         private System.Windows.Forms.Button btnUpdate;
         private System.Windows.Forms.Button btnAdd;
+        private System.Windows.Forms.Button btnSettings;
+        private System.Windows.Forms.Label lblCategorySaved;
+        private System.Windows.Forms.Label lblPasswordSaved;
+        private System.Windows.Forms.Label lblUsernameSaved;
     }
 }

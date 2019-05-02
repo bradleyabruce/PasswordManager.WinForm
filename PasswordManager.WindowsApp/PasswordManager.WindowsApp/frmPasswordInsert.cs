@@ -68,7 +68,7 @@ namespace PasswordManager.WindowsApp
 
         private void BtnAdd_Click(object sender, EventArgs e)
         {
-
+            //get values from user
             string domain = tbWebsiteDomain.Text;
             string username = tbWebsiteUsername.Text;
             string password = tbWebsitePassword.Text;
@@ -104,6 +104,7 @@ namespace PasswordManager.WindowsApp
                     //if all entries are filled in, continue with insert
                     else
                     {
+
                         lblPassword.ForeColor = System.Drawing.Color.Black;               
 
                         //get IDs from inserted data
@@ -112,10 +113,9 @@ namespace PasswordManager.WindowsApp
                         passwordID = di.insertWebsitePassword(password);
                         categoryID = Convert.ToInt32(cbCategory.SelectedIndex);
 
-                        lblError.Visible = true;
-
+                        
                         //insert into entry table
-                        lblError.Text = di.insertEntry(userID, domainID, usernameID, passwordID, categoryID).ToString();
+                        di.insertEntry(userID, domainID, usernameID, passwordID, categoryID).ToString();
 
                         //reset form
                         tbWebsiteDomain.Text = null;
