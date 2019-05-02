@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.pnlMain = new System.Windows.Forms.Panel();
             this.btnSettings = new System.Windows.Forms.Button();
             this.btnAdd = new System.Windows.Forms.Button();
@@ -38,6 +39,9 @@
             this.lblServerStatus = new System.Windows.Forms.Label();
             this.lblServer = new System.Windows.Forms.Label();
             this.pnlResults = new System.Windows.Forms.Panel();
+            this.pbCategorySave = new System.Windows.Forms.PictureBox();
+            this.pbPasswordSave = new System.Windows.Forms.PictureBox();
+            this.pbUsernameSave = new System.Windows.Forms.PictureBox();
             this.btnDelete = new System.Windows.Forms.Button();
             this.btnUpdate = new System.Windows.Forms.Button();
             this.cbPassword = new System.Windows.Forms.CheckBox();
@@ -49,12 +53,13 @@
             this.lblResultCategory = new System.Windows.Forms.Label();
             this.btnCopyPassword = new System.Windows.Forms.Button();
             this.btnCopyEmail = new System.Windows.Forms.Button();
-            this.lblUsernameSaved = new System.Windows.Forms.Label();
-            this.lblPasswordSaved = new System.Windows.Forms.Label();
-            this.lblCategorySaved = new System.Windows.Forms.Label();
+            this.ttNotYetSaved = new System.Windows.Forms.ToolTip(this.components);
             this.pnlMain.SuspendLayout();
             this.pnlList.SuspendLayout();
             this.pnlResults.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbCategorySave)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbPasswordSave)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbUsernameSave)).BeginInit();
             this.SuspendLayout();
             // 
             // pnlMain
@@ -148,9 +153,9 @@
             // pnlResults
             // 
             this.pnlResults.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pnlResults.Controls.Add(this.lblCategorySaved);
-            this.pnlResults.Controls.Add(this.lblPasswordSaved);
-            this.pnlResults.Controls.Add(this.lblUsernameSaved);
+            this.pnlResults.Controls.Add(this.pbCategorySave);
+            this.pnlResults.Controls.Add(this.pbPasswordSave);
+            this.pnlResults.Controls.Add(this.pbUsernameSave);
             this.pnlResults.Controls.Add(this.btnDelete);
             this.pnlResults.Controls.Add(this.btnUpdate);
             this.pnlResults.Controls.Add(this.cbPassword);
@@ -166,7 +171,39 @@
             this.pnlResults.Name = "pnlResults";
             this.pnlResults.Size = new System.Drawing.Size(338, 500);
             this.pnlResults.TabIndex = 1;
-            this.pnlResults.Paint += new System.Windows.Forms.PaintEventHandler(this.PnlResults_Paint);
+            // 
+            // pbCategorySave
+            // 
+            this.pbCategorySave.Image = global::PasswordManager.WindowsApp.Properties.Resources.warning;
+            this.pbCategorySave.Location = new System.Drawing.Point(299, 125);
+            this.pbCategorySave.Name = "pbCategorySave";
+            this.pbCategorySave.Size = new System.Drawing.Size(16, 16);
+            this.pbCategorySave.TabIndex = 17;
+            this.pbCategorySave.TabStop = false;
+            this.ttNotYetSaved.SetToolTip(this.pbCategorySave, "Change is not yet saved!");
+            this.pbCategorySave.Visible = false;
+            // 
+            // pbPasswordSave
+            // 
+            this.pbPasswordSave.Image = global::PasswordManager.WindowsApp.Properties.Resources.warning;
+            this.pbPasswordSave.Location = new System.Drawing.Point(71, 75);
+            this.pbPasswordSave.Name = "pbPasswordSave";
+            this.pbPasswordSave.Size = new System.Drawing.Size(16, 16);
+            this.pbPasswordSave.TabIndex = 16;
+            this.pbPasswordSave.TabStop = false;
+            this.ttNotYetSaved.SetToolTip(this.pbPasswordSave, "Change is not yet saved!");
+            this.pbPasswordSave.Visible = false;
+            // 
+            // pbUsernameSave
+            // 
+            this.pbUsernameSave.Image = global::PasswordManager.WindowsApp.Properties.Resources.warning;
+            this.pbUsernameSave.Location = new System.Drawing.Point(71, 30);
+            this.pbUsernameSave.Name = "pbUsernameSave";
+            this.pbUsernameSave.Size = new System.Drawing.Size(16, 16);
+            this.pbUsernameSave.TabIndex = 15;
+            this.pbUsernameSave.TabStop = false;
+            this.ttNotYetSaved.SetToolTip(this.pbUsernameSave, "Change is not yet saved!");
+            this.pbUsernameSave.Visible = false;
             // 
             // btnDelete
             // 
@@ -239,7 +276,7 @@
             this.comboCategoryResult.FormattingEnabled = true;
             this.comboCategoryResult.Location = new System.Drawing.Point(98, 122);
             this.comboCategoryResult.Name = "comboCategoryResult";
-            this.comboCategoryResult.Size = new System.Drawing.Size(140, 21);
+            this.comboCategoryResult.Size = new System.Drawing.Size(195, 21);
             this.comboCategoryResult.TabIndex = 4;
             this.comboCategoryResult.SelectedIndexChanged += new System.EventHandler(this.ComboCategoryResult_SelectedIndexChanged);
             // 
@@ -272,31 +309,6 @@
             this.btnCopyEmail.UseVisualStyleBackColor = true;
             this.btnCopyEmail.Click += new System.EventHandler(this.BtnCopyEmail_Click);
             // 
-            // lblUsernameSaved
-            // 
-            this.lblUsernameSaved.AutoSize = true;
-            this.lblUsernameSaved.Location = new System.Drawing.Point(71, 33);
-            this.lblUsernameSaved.Name = "lblUsernameSaved";
-            this.lblUsernameSaved.Size = new System.Drawing.Size(0, 13);
-            this.lblUsernameSaved.TabIndex = 12;
-            // 
-            // lblPasswordSaved
-            // 
-            this.lblPasswordSaved.AutoSize = true;
-            this.lblPasswordSaved.Location = new System.Drawing.Point(69, 76);
-            this.lblPasswordSaved.Name = "lblPasswordSaved";
-            this.lblPasswordSaved.Size = new System.Drawing.Size(0, 13);
-            this.lblPasswordSaved.TabIndex = 13;
-            // 
-            // lblCategorySaved
-            // 
-            this.lblCategorySaved.AutoSize = true;
-            this.lblCategorySaved.Location = new System.Drawing.Point(244, 125);
-            this.lblCategorySaved.Name = "lblCategorySaved";
-            this.lblCategorySaved.Size = new System.Drawing.Size(0, 13);
-            this.lblCategorySaved.TabIndex = 14;
-            this.lblCategorySaved.Click += new System.EventHandler(this.LblCategorySaved_Click);
-            // 
             // frmPasswordRetrieval
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -311,6 +323,9 @@
             this.pnlList.PerformLayout();
             this.pnlResults.ResumeLayout(false);
             this.pnlResults.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbCategorySave)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbPasswordSave)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbUsernameSave)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -338,8 +353,9 @@
         private System.Windows.Forms.Button btnUpdate;
         private System.Windows.Forms.Button btnAdd;
         private System.Windows.Forms.Button btnSettings;
-        private System.Windows.Forms.Label lblCategorySaved;
-        private System.Windows.Forms.Label lblPasswordSaved;
-        private System.Windows.Forms.Label lblUsernameSaved;
+        private System.Windows.Forms.PictureBox pbUsernameSave;
+        private System.Windows.Forms.PictureBox pbCategorySave;
+        private System.Windows.Forms.PictureBox pbPasswordSave;
+        private System.Windows.Forms.ToolTip ttNotYetSaved;
     }
 }

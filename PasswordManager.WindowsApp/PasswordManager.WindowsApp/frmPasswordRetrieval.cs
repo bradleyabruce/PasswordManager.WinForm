@@ -53,11 +53,11 @@ namespace PasswordManager.WindowsApp
                 pnlList.Enabled = false;
             }
 
-
-            lblUsernameSaved.Text = "";
-            lblPasswordSaved.Text = "";
-            lblCategorySaved.Text = "";
-
+        
+            pbUsernameSave.Visible = false;
+            pbPasswordSave.Visible = false;
+            pbCategorySave.Visible = false;
+           
         }
 
 
@@ -101,10 +101,9 @@ namespace PasswordManager.WindowsApp
             comboCategoryResult.DataSource = dr.getCategories();
             comboCategoryResult.SelectedIndex = dr.getEntryCategory(entryID);
 
-            lblUsernameSaved.Text = "";
-            lblPasswordSaved.Text = "";
-            lblCategorySaved.Text = "";
-
+            pbUsernameSave.Visible = false;
+            pbPasswordSave.Visible = false;
+            pbCategorySave.Visible = false;
         }
 
 
@@ -272,38 +271,27 @@ namespace PasswordManager.WindowsApp
             //set selected item the same as before
             lbWebsiteList.SelectedIndex = entryIndex;
 
-            lblUsernameSaved.Text = "";
-            lblPasswordSaved.Text = "";
-            lblCategorySaved.Text = "";
+            pbUsernameSave.Visible = false;
+            pbPasswordSave.Visible = false;
+            pbCategorySave.Visible = false;
         }
 
         //when username text box is changed
         private void TbResultUsername_TextChanged(object sender, EventArgs e)
         {
-            lblUsernameSaved.Text = "Not Yet Saved!";
-            lblUsernameSaved.ForeColor = System.Drawing.Color.Red;
+            pbUsernameSave.Visible = true;
         }
 
         private void TbResultPassword_TextChanged(object sender, EventArgs e)
         {
-            lblPasswordSaved.Text = "Not Yet Saved!";
-            lblPasswordSaved.ForeColor = System.Drawing.Color.Red;
+            pbPasswordSave.Visible = true;
         }
 
         private void ComboCategoryResult_SelectedIndexChanged(object sender, EventArgs e)
         {
-            lblCategorySaved.Text = "Not Yet Saved!";
-            lblCategorySaved.ForeColor = System.Drawing.Color.Red;
+            pbCategorySave.Visible = true;
         }
 
-        private void PnlResults_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void LblCategorySaved_Click(object sender, EventArgs e)
-        {
-
-        }
+   
     }
 }
