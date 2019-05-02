@@ -4,7 +4,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Net.Mail;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -18,7 +21,9 @@ namespace PasswordManager.WindowsApp
         dataRetrieval dr = new dataRetrieval();
         dataDelete dd = new dataDelete();
         dataUpdate du = new dataUpdate();
+        generatePassword gp = new generatePassword();
 
+        int hideCounter = 1;
 
         //when the form is loaded, check status and load categories and entries
         public frmPasswordRetrieval()
@@ -29,13 +34,17 @@ namespace PasswordManager.WindowsApp
             //check database status
             if (dl.databaseCheck() == true)
             {
-                lblServerStatus.Text = " Online";
-                lblServerStatus.ForeColor = System.Drawing.Color.Green;
+                String path = "..\\..\\Resources\\Connected.png";
+                pbStatus.Image = Image.FromFile(path);
+                ttRetrieve.SetToolTip(pbStatus, "You are connected!");
+
             }
             else
             {
-                lblServerStatus.Text = " Offline";
-                lblServerStatus.ForeColor = System.Drawing.Color.Red;
+                String path = "..\\..\\Resources\\notConnected.png";
+                pbStatus.Image = Image.FromFile(path);
+                ttRetrieve.SetToolTip(pbStatus, "You are not connected!");
+
             }
 
             //load categories
@@ -51,13 +60,15 @@ namespace PasswordManager.WindowsApp
             {
                 pnlResults.Enabled = false;
                 pnlList.Enabled = false;
+                
             }
 
-        
             pbUsernameSave.Visible = false;
             pbPasswordSave.Visible = false;
             pbCategorySave.Visible = false;
-           
+            btnCancel.Enabled = false;
+            btnUpdate.Enabled = false;
+
         }
 
 
@@ -104,37 +115,38 @@ namespace PasswordManager.WindowsApp
             pbUsernameSave.Visible = false;
             pbPasswordSave.Visible = false;
             pbCategorySave.Visible = false;
+            btnCancel.Enabled = false;
+            btnUpdate.Enabled = false;
         }
 
-
-
-        //when the password checkbox is changed hide or unhide the password
-        private void CbPassword_CheckedChanged(object sender, EventArgs e)
-        {
-            if(cbPassword.Checked == true)
-            {
-                tbResultPassword.PasswordChar = '\0';
-            }
-            else
-            {
-                tbResultPassword.PasswordChar = '*';
-            }
-
-            
-        }
 
 
         //when the copy button is click, copy result to clipboard
         private void BtnCopyEmail_Click(object sender, EventArgs e)
         {
-            Clipboard.SetText(tbResultUsername.Text);
+            if (tbResultUsername.Text == "" || tbResultUsername.Text == null)
+            {
+
+            }
+            else
+            {
+                Clipboard.SetText(tbResultUsername.Text);
+            }
         }
 
 
         //when the copy button is click, copy result to clipboard
         private void BtnCopyPassword_Click(object sender, EventArgs e)
         {
-            Clipboard.SetText(tbResultPassword.Text);
+            if (tbResultPassword.Text == "" || tbResultPassword.Text == null)
+            {
+
+            }
+            else
+            {
+                Clipboard.SetText(tbResultPassword.Text);
+            }
+            
         }
 
 
@@ -145,6 +157,7 @@ namespace PasswordManager.WindowsApp
             //create new form to open
             frmPasswordInsert newForm = new frmPasswordInsert();
             newForm.Show();
+            newForm.Location = this.Location;
 
             //close login form
             this.Close();
@@ -180,6 +193,10 @@ namespace PasswordManager.WindowsApp
                 tbResultPassword.Text = "";
                 tbResultUsername.Text = "";
                 comboCategoryResult.DataSource = null;
+                pbUsernameSave.Visible = false;
+                pbPasswordSave.Visible = false;
+                pbCategorySave.Visible = false;
+                
             }
 
 
@@ -274,24 +291,101 @@ namespace PasswordManager.WindowsApp
             pbUsernameSave.Visible = false;
             pbPasswordSave.Visible = false;
             pbCategorySave.Visible = false;
+            btnCancel.Enabled = false;
+            btnUpdate.Enabled = false;
         }
 
-        //when username text box is changed
+        //when user makes changes to text boxes text and combo box selection
         private void TbResultUsername_TextChanged(object sender, EventArgs e)
         {
             pbUsernameSave.Visible = true;
+            btnUpdate.Enabled = true;
+            btnCancel.Enabled = true;
         }
 
         private void TbResultPassword_TextChanged(object sender, EventArgs e)
         {
             pbPasswordSave.Visible = true;
+            btnUpdate.Enabled = true;
+            btnCancel.Enabled = true;
         }
 
         private void ComboCategoryResult_SelectedIndexChanged(object sender, EventArgs e)
         {
             pbCategorySave.Visible = true;
+            btnUpdate.Enabled = true;
+            btnCancel.Enabled = true;
         }
 
-   
+
+        //generate new random password for user
+        private void Button1_Click(object sender, EventArgs e)
+        {
+            tbResultPassword.Text = gp.GenerateToken(50) + "-" + gp.GenerateToken(50) + "-" + gp.GenerateToken(50);
+        }
+
+
+        //toggle hiding and showing password
+        private void BtnHidePassword_Click(object sender, EventArgs e)
+        {
+            //increase hide counter every time the button is pressed
+            hideCounter++;
+
+            if (hideCounter % 2 == 0)
+            {
+                //unhide text box, set image
+                tbResultPassword.PasswordChar = '\0';
+                String path = "..\\..\\Resources\\unhide.png";
+                btnHidePassword.Image = Image.FromFile(path);
+            }
+            else
+            {
+                //unhide text box, set image
+                tbResultPassword.PasswordChar = '*';
+                String path = "..\\..\\Resources\\hide.png";
+                btnHidePassword.Image = Image.FromFile(path);
+            }
+
+        }
+
+
+        //when cancel button is pressed
+        private void BtnCancel_Click(object sender, EventArgs e)
+        {
+
+            //get website and WebsiteUsernameID
+            string websiteDomain = "";
+            string websiteUsername = "";
+            string entryID = "";
+
+            //get input from textbox
+            String selectedEntry = lbWebsiteList.SelectedItem.ToString();
+
+            //split string
+            List<String> websiteArray = selectedEntry.Split(',').ToList<string>();
+
+            websiteDomain = websiteArray[0];
+            websiteUsername = websiteArray[1].Substring(1);
+            entryID = websiteArray[2].Substring(1);
+
+            //pass those values to retrieve username and password
+            string userID = Program.MyStaticValues.userID.ToString();
+
+            //set username and password text boxes
+            tbResultPassword.Text = dr.getWebsitePassword(entryID);
+            tbResultUsername.Text = websiteUsername;
+
+            //set current category combo box
+            comboCategoryResult.DataSource = dr.getCategories();
+            comboCategoryResult.SelectedIndex = dr.getEntryCategory(entryID);
+
+            pbUsernameSave.Visible = false;
+            pbPasswordSave.Visible = false;
+            pbCategorySave.Visible = false;
+            btnCancel.Enabled = false;
+            btnUpdate.Enabled = false;
+
+
+        }
     }
 }

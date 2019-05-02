@@ -1,5 +1,6 @@
 ﻿using PasswordManager.WindowsApp.DAO;
 using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 
@@ -21,13 +22,16 @@ namespace PasswordManager.WindowsApp
             InitializeComponent();
             if (utilClass.databaseCheck() == true)
             {
-                lblStatus.Text = " Online";
-                lblStatus.ForeColor = System.Drawing.Color.Green;
+                String path = "..\\..\\Resources\\Connected.png";
+                pbStatus.Image = Image.FromFile(path);
+                ttLogin.SetToolTip(pbStatus, "You are connected!");
+
             }
             else
             {
-                lblStatus.Text = " Offline";
-                lblStatus.ForeColor = System.Drawing.Color.Red;
+                String path = "..\\..\\Resources\\notConnected.png";
+                pbStatus.Image = Image.FromFile(path);
+                ttLogin.SetToolTip(pbStatus, "You are not connected!");
                 btnLogin.Enabled = false;
             }
 
@@ -72,12 +76,17 @@ namespace PasswordManager.WindowsApp
                         lblUsername.ForeColor = System.Drawing.Color.Black;
                         lblPassword.ForeColor = System.Drawing.Color.Black;
                         
+
+
                         //create new form to open
                         frmPasswordRetrieval newForm = new frmPasswordRetrieval();
                         newForm.Show();
+                        newForm.Location = this.Location;
 
                         //close login form
                         this.Close();
+
+
                     }
 
                     //if the login returns false alert the user 

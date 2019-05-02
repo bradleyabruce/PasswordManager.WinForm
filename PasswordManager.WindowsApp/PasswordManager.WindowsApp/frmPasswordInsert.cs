@@ -1,7 +1,9 @@
 ﻿using PasswordManager.WindowsApp.DAO;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace PasswordManager.WindowsApp
@@ -12,7 +14,9 @@ namespace PasswordManager.WindowsApp
         dataLogin dl = new dataLogin();
         dataRetrieval dr = new dataRetrieval();
         dataInsert di = new dataInsert();
+        generatePassword gp = new generatePassword();
 
+        int hideCounter = 1;
 
         //on page load
         public frmPasswordInsert()
@@ -22,13 +26,17 @@ namespace PasswordManager.WindowsApp
             //check database status
             if (dl.databaseCheck() == true)
             {
-                lblServerStatus.Text = " Online";
-                lblServerStatus.ForeColor = System.Drawing.Color.Green;
+                String path = "..\\..\\Resources\\Connected.png";
+                pbStatus.Image = Image.FromFile(path);
+                ttInsert.SetToolTip(pbStatus, "You are connected!");
+
             }
             else
             {
-                lblServerStatus.Text = " Offline";
-                lblServerStatus.ForeColor = System.Drawing.Color.Red;
+                String path = "..\\..\\Resources\\notConnected.png";
+                pbStatus.Image = Image.FromFile(path);
+                ttInsert.SetToolTip(pbStatus, "You are not connected!");
+                
             }
 
             cbCategory.DataSource = dr.getCategories();
@@ -45,25 +53,11 @@ namespace PasswordManager.WindowsApp
             //create new form to open
             frmPasswordRetrieval newForm = new frmPasswordRetrieval();
             newForm.Show();
+            newForm.Location = this.Location;
 
             //close login form
             this.Close();
         }
-
-
-        //when password check box is affected
-        private void ChPassword_CheckedChanged(object sender, EventArgs e)
-        {
-            if (chPassword.Checked == true)
-            {
-                tbWebsitePassword.PasswordChar = '\0';
-            }
-            else
-            {
-                tbWebsitePassword.PasswordChar = '*';
-            }
-        }
-
 
 
         private void BtnAdd_Click(object sender, EventArgs e)
@@ -126,49 +120,91 @@ namespace PasswordManager.WindowsApp
                     }
                 }
             }
-                
-            
-
-
-
-
+ 
         }
 
+
+
+        //generate new password
         private void BtnGenerate_Click(object sender, EventArgs e)
         {
-            tbWebsitePassword.Text = GenerateToken(50) + "-" + GenerateToken(50) + "-" + GenerateToken(50);
+            tbWebsitePassword.Text = gp.GenerateToken(50) + "-" + gp.GenerateToken(50) + "-" + gp.GenerateToken(50);
         }
 
-
-
-
-        //generates a random string consisting of 5 characters
-        public string GenerateToken(int length)
+        private void BtnPasswordHide_Click(object sender, EventArgs e)
         {
-            RNGCryptoServiceProvider cryptRNG = new RNGCryptoServiceProvider();
-            byte[] tokenBuffer = new byte[length];
-            cryptRNG.GetBytes(tokenBuffer);
-            string randomString =  Convert.ToBase64String(tokenBuffer);
 
-            char[] characters = randomString.ToCharArray();
-            List<char> finalChars = new List<char>();
-            string password = "";
-            Random rand = new Random();
+            //increase hide counter every time the button is pressed
+            hideCounter++;
 
-            for (int i = 0; i < 5; i++)
+            if (hideCounter % 2 == 0)
             {
-                
-                int index = rand.Next(0, characters.Length);
-                
+                //unhide text box, set image
+                tbWebsitePassword.PasswordChar = '\0';
+                String path = "..\\..\\Resources\\unhide.png";
+                btnPasswordHide.Image = Image.FromFile(path);
+            }
+            else
+            {
+                //unhide text box, set image
+                tbWebsitePassword.PasswordChar = '*';
+                String path = "..\\..\\Resources\\hide.png";
+                btnPasswordHide.Image = Image.FromFile(path);
+            }
+        }
 
-                finalChars.Add(characters[index]);
+        private void BtnCopyUsername_Click(object sender, EventArgs e)
+        {
+            if (tbWebsiteUsername.Text == "" || tbWebsiteUsername.Text == null)
+            {
+
+            }
+            else
+            {
+                Clipboard.SetText(tbWebsiteUsername.Text);
+            }
+        }
+
+        private void BtnCopyPassword_Click(object sender, EventArgs e)
+        {
+            if (tbWebsitePassword.Text == "" || tbWebsitePassword.Text == null)
+            {
+
+            }
+            else
+            {
+                Clipboard.SetText(tbWebsitePassword.Text);
             }
             
-            for(int i = 0; i<finalChars.Count; i++)
+        }
+
+        private void BtnClear_Click(object sender, EventArgs e)
+        {
+            tbWebsiteDomain.Text = "";
+            tbWebsiteUsername.Text = "";
+            tbWebsitePassword.Text = "";
+            cbCategory.SelectedIndex = 0;
+        }
+
+        private void BtnChangeDomain_Click(object sender, EventArgs e)
+        {
+           
+            string url = tbWebsiteDomain.Text;
+
+            string pattern = @"([\da-z\.-]+)\.([a-z\.]{2,8})";
+
+            Regex regex = new Regex(pattern);
+            MatchCollection results = regex.Matches(url);
+
+            if (results.Count == 0)
             {
-                password += finalChars[i];
+                //do nothing
             }
-            return password;
+            else
+            {
+                string result = results[0].Value;
+                tbWebsiteDomain.Text = result;
+            }
 
         }
     }

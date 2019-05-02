@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmLogin));
-            this.lblDatabaseStatus = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.lblError = new System.Windows.Forms.Label();
             this.btnLogin = new System.Windows.Forms.Button();
@@ -37,17 +37,11 @@
             this.tbPassword = new System.Windows.Forms.TextBox();
             this.lblUsername = new System.Windows.Forms.Label();
             this.tbUsername = new System.Windows.Forms.TextBox();
-            this.lblStatus = new System.Windows.Forms.Label();
+            this.ttLogin = new System.Windows.Forms.ToolTip(this.components);
+            this.pbStatus = new System.Windows.Forms.PictureBox();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbStatus)).BeginInit();
             this.SuspendLayout();
-            // 
-            // lblDatabaseStatus
-            // 
-            this.lblDatabaseStatus.Location = new System.Drawing.Point(9, 6);
-            this.lblDatabaseStatus.Name = "lblDatabaseStatus";
-            this.lblDatabaseStatus.Size = new System.Drawing.Size(91, 16);
-            this.lblDatabaseStatus.TabIndex = 2;
-            this.lblDatabaseStatus.Text = "Database Status:";
             // 
             // panel1
             // 
@@ -57,9 +51,9 @@
             this.panel1.Controls.Add(this.tbPassword);
             this.panel1.Controls.Add(this.lblUsername);
             this.panel1.Controls.Add(this.tbUsername);
-            this.panel1.Location = new System.Drawing.Point(12, 25);
+            this.panel1.Location = new System.Drawing.Point(12, 40);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(250, 201);
+            this.panel1.Size = new System.Drawing.Size(250, 180);
             this.panel1.TabIndex = 1;
             // 
             // lblError
@@ -73,7 +67,7 @@
             // 
             // btnLogin
             // 
-            this.btnLogin.Location = new System.Drawing.Point(88, 175);
+            this.btnLogin.Location = new System.Drawing.Point(88, 149);
             this.btnLogin.Name = "btnLogin";
             this.btnLogin.Size = new System.Drawing.Size(75, 23);
             this.btnLogin.TabIndex = 4;
@@ -114,14 +108,14 @@
             this.tbUsername.Size = new System.Drawing.Size(247, 20);
             this.tbUsername.TabIndex = 0;
             // 
-            // lblStatus
+            // pbStatus
             // 
-            this.lblStatus.AutoSize = true;
-            this.lblStatus.Location = new System.Drawing.Point(97, 6);
-            this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(28, 13);
-            this.lblStatus.TabIndex = 3;
-            this.lblStatus.Text = "Test";
+            this.pbStatus.Image = global::PasswordManager.WindowsApp.Properties.Resources.notConnected;
+            this.pbStatus.Location = new System.Drawing.Point(12, 4);
+            this.pbStatus.Name = "pbStatus";
+            this.pbStatus.Size = new System.Drawing.Size(32, 32);
+            this.pbStatus.TabIndex = 2;
+            this.pbStatus.TabStop = false;
             // 
             // frmLogin
             // 
@@ -129,29 +123,28 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(275, 232);
-            this.Controls.Add(this.lblStatus);
+            this.Controls.Add(this.pbStatus);
             this.Controls.Add(this.panel1);
-            this.Controls.Add(this.lblDatabaseStatus);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmLogin";
             this.Text = "Password Manager";
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbStatus)).EndInit();
             this.ResumeLayout(false);
-            this.PerformLayout();
+
         }
 
         #endregion
-
-        private System.Windows.Forms.Label lblDatabaseStatus;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button btnLogin;
         private System.Windows.Forms.Label lblPassword;
         private System.Windows.Forms.TextBox tbPassword;
         private System.Windows.Forms.Label lblUsername;
         private System.Windows.Forms.TextBox tbUsername;
-        private System.Windows.Forms.Label lblStatus;
         private System.Windows.Forms.Label lblError;
+        private System.Windows.Forms.ToolTip ttLogin;
+        private System.Windows.Forms.PictureBox pbStatus;
     }
 }
 
