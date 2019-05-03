@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -68,65 +69,55 @@ namespace PasswordManager.WindowsApp.DAO
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         //get all entries of user logins and passwords
-        public List<String> getEntries(int CategoryID)
+        public DataSet getEntries(int CategoryID)
         {
 
-            List<string> entries = new List<string>();
-            //List<string> WebsiteUsernameIDs = new List<string>();
-
-            string queryString = "";
+            var query = "";
 
             //if user is searching for all entries 
             if (CategoryID == 0)
             {
-                queryString = "SELECT dbo.tWebsiteDomains.WebsiteDomain, dbo.tWebsiteUsername.WebsiteUsername, dbo.tEntries.EntryID FROM dbo.tEntries INNER JOIN dbo.tWebsiteDomains ON dbo.tEntries.WebsiteDomainID = dbo.tWebsiteDomains.WebsiteDomainID INNER JOIN dbo.tWebsiteUsername ON dbo.tEntries.WebsiteUsernameID = dbo.tWebsiteUsername.WebsiteUsernameID";
+                query = "SELECT dbo.tWebsiteUsername.WebsiteUsername, dbo.tWebsiteDomains.WebsiteDomain, dbo.tEntries.EntryID FROM dbo.tEntries INNER JOIN dbo.tWebsiteUsername ON dbo.tEntries.WebsiteUsernameID = dbo.tWebsiteUsername.WebsiteUsernameID INNER JOIN dbo.tWebsiteDomains ON dbo.tEntries.WebsiteDomainID = dbo.tWebsiteDomains.WebsiteDomainID INNER JOIN dbo.tUsers ON dbo.tEntries.UserID = dbo.tUsers.UserID WHERE(dbo.tUsers.UserID = " + Program.MyStaticValues.userID + ")";
             }
             //if user is searching for specific category
             else
             {
-                queryString = "SELECT dbo.tWebsiteDomains.WebsiteDomain, dbo.tWebsiteUsername.WebsiteUsername, dbo.tEntries.EntryID FROM dbo.tEntries INNER JOIN dbo.tWebsiteDomains ON dbo.tEntries.WebsiteDomainID = dbo.tWebsiteDomains.WebsiteDomainID INNER JOIN dbo.tWebsiteUsername ON dbo.tEntries.WebsiteUsernameID = dbo.tWebsiteUsername.WebsiteUsernameID WHERE(dbo.tEntries.CategoryID =" + CategoryID + ")";
+               query = "SELECT dbo.tWebsiteUsername.WebsiteUsername, dbo.tWebsiteDomains.WebsiteDomain, dbo.tEntries.EntryID FROM dbo.tEntries INNER JOIN dbo.tWebsiteUsername ON dbo.tEntries.WebsiteUsernameID = dbo.tWebsiteUsername.WebsiteUsernameID INNER JOIN dbo.tWebsiteDomains ON dbo.tEntries.WebsiteDomainID = dbo.tWebsiteDomains.WebsiteDomainID INNER JOIN dbo.tUsers ON dbo.tEntries.UserID = dbo.tUsers.UserID WHERE(dbo.tUsers.UserID = " + Program.MyStaticValues.userID + ") AND(dbo.tEntries.CategoryID =" + CategoryID + ")";
             }
             
+           
+            var dataAdapter = new SqlDataAdapter(query, dl.getConnectionString());
 
-            //pass values to sql server
-            using (SqlConnection conn = new SqlConnection(dl.getConnectionString()))
-            {
-
-                SqlCommand command = new SqlCommand(queryString, conn);
-                conn.Open();
-
-                //query database
-                SqlDataReader reader = command.ExecuteReader();
-                try
-                {
-
-                    //return the userID of the username and password conbination
-                    while (reader.Read())
-                    {
-                        //get entries and websiteUsernameIDs
-                        entries.Add(String.Format("{0}, {1}, {2}", reader["WebsiteDomain"], reader["WebsiteUsername"], reader["EntryID"]));
-
-                    }
-
-                    //if nothing is returned, then there must not be a match and the username / password does not exist
-                    if (entries.Count == 0)
-                    {
-
-                    }
-
-                }
-
-                //something went wrong
-                catch (Exception e)
-                {
-
-                }
-
-            }
+            var commandBuilder = new SqlCommandBuilder(dataAdapter);
+            var ds = new DataSet();
+            dataAdapter.Fill(ds);
 
             //everything went well
-            return entries;
+            return ds;
 
             
         }
