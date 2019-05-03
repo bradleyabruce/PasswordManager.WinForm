@@ -95,6 +95,7 @@
             this.btnSettings.TabIndex = 13;
             this.ttRetrieve.SetToolTip(this.btnSettings, "Settings");
             this.btnSettings.UseVisualStyleBackColor = true;
+            this.btnSettings.Click += new System.EventHandler(this.BtnSettings_Click);
             // 
             // pnlList
             // 
@@ -147,7 +148,6 @@
             this.dataGridEntries.Size = new System.Drawing.Size(383, 466);
             this.dataGridEntries.TabIndex = 3;
             this.dataGridEntries.SelectionChanged += new System.EventHandler(this.DataGridEntries_SelectionChanged);
-
             // 
             // comboCategorySort
             // 

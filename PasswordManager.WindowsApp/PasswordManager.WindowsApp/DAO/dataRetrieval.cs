@@ -62,7 +62,7 @@ namespace PasswordManager.WindowsApp.DAO
             }
 
             //everything went well
-            catgories.Insert(0, "All");
+            catgories.Insert(0, "None");
             return catgories;
         }
 

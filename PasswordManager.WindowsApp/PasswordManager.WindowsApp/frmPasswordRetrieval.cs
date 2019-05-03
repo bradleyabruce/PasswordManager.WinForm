@@ -449,7 +449,7 @@ namespace PasswordManager.WindowsApp
         {
             if (userTextChange == true)
             {
-                pbUsernameSave.Visible = true;
+                pbPasswordSave.Visible = true;
                 btnUpdate.Enabled = true;
                 btnCancel.Enabled = true;
             }
@@ -463,7 +463,7 @@ namespace PasswordManager.WindowsApp
         {
             if (userTextChange == true)
             {
-                pbUsernameSave.Visible = true;
+                pbCategorySave.Visible = true;
                 btnUpdate.Enabled = true;
                 btnCancel.Enabled = true;
             }
@@ -576,7 +576,18 @@ namespace PasswordManager.WindowsApp
         }
 
 
+        //launch settings pane
+        private void BtnSettings_Click(object sender, EventArgs e)
+        {
 
+            //create new form to open
+            frmSettings newForm = new frmSettings();
+            newForm.Show();
+            newForm.Location = this.Location;
 
+            //close login form
+            this.Close();
+
+        }
     }//end class
 }//end namespace
