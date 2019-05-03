@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Data.SqlClient;
 using System.IO;
-
+using System.Security.Cryptography;
+using System.Text;
 
 namespace PasswordManager.WindowsApp.DAO
 {
@@ -71,21 +72,21 @@ namespace PasswordManager.WindowsApp.DAO
 
 
         //connect to database with login
-        public bool loginToDatabase(string inputUsername, string inputPassword)
+        public bool loginToDatabase(string email, string hashedPassword)
         {
             //store userID
             string userID = "";
 
             //query to pass to database
-            string queryString = "SELECT [UserID],[UserLoginEmail],[UserLoginPassword] FROM[PasswordManager].[dbo].[tUsers] WHERE UserLoginEmail = @user AND UserLoginPassword = @password";
+            string queryString = "SELECT [UserID],[UserLoginEmail],[UserLoginPassword] FROM[PasswordManager].[dbo].[tUsers] WHERE UserLoginEmail = @email AND UserLoginPassword = @password";
             
             //pass values to sql server
             using (SqlConnection conn = new SqlConnection(getConnectionString()))
             {
 
                 SqlCommand command = new SqlCommand(queryString, conn);
-                command.Parameters.AddWithValue("@user", inputUsername);
-                command.Parameters.AddWithValue("@password", inputPassword);
+                command.Parameters.AddWithValue("@email", email);
+                command.Parameters.AddWithValue("@password", hashedPassword);
                 conn.Open();
 
                 //query database
@@ -122,6 +123,65 @@ namespace PasswordManager.WindowsApp.DAO
             //return true   
             Program.MyStaticValues.userID = int.Parse(userID);
             return true;
+        }
+
+
+
+
+        
+        public int Register(string email, string hashedPassword)
+        {
+
+            string query = "INSERT INTO [dbo].[tUsers] (UserLoginEmail, UserLoginPassword) VALUES (@UserLoginEmail, @UserLoginPassword); SELECT SCOPE_IDENTITY()";
+
+            int returnedID = 0;
+
+            using (SqlConnection conn = new SqlConnection(getConnectionString()))
+            {
+
+                using (SqlCommand command = new SqlCommand(query, conn))
+                {
+
+                    command.Parameters.AddWithValue("@UserLoginEmail", email);
+                    command.Parameters.AddWithValue("@UserLoginPassword", hashedPassword);
+
+                    conn.Open();
+
+                    returnedID = Convert.ToInt32(command.ExecuteScalar());
+
+                    if (conn.State == System.Data.ConnectionState.Open) conn.Close();
+
+                    return returnedID;
+
+                }
+            }
+
+
+
+
+        }
+        
+
+
+
+        public string EncodePassword(string password)
+        {
+
+            byte[] tempSource;
+            byte[] tempHash;
+
+            tempSource = UTF8Encoding.UTF8.GetBytes(password);
+
+            //compute hash
+            tempHash = new SHA1CryptoServiceProvider().ComputeHash(tempSource);
+
+            StringBuilder build = new StringBuilder(tempHash.Length);
+            for (int i = 0; i<tempHash.Length; i++)
+            {
+                build.Append(tempHash[i].ToString("X2"));
+            }
+
+            return build.ToString(); ;
         }
 
 

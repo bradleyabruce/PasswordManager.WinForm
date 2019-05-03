@@ -1,8 +1,6 @@
 ﻿using PasswordManager.WindowsApp.DAO;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -40,7 +38,6 @@ namespace PasswordManager.WindowsApp
             }
 
             cbCategory.DataSource = dr.getCategories();
-
 
         }
 

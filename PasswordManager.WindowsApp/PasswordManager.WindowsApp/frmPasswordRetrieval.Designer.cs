@@ -146,7 +146,8 @@
             this.dataGridEntries.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridEntries.Size = new System.Drawing.Size(383, 466);
             this.dataGridEntries.TabIndex = 3;
-            this.dataGridEntries.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridEntries_CellClick);
+            this.dataGridEntries.SelectionChanged += new System.EventHandler(this.DataGridEntries_SelectionChanged);
+
             // 
             // comboCategorySort
             // 
@@ -233,7 +234,7 @@
             this.btnGeneratePassword.TabIndex = 18;
             this.ttRetrieve.SetToolTip(this.btnGeneratePassword, "Generate new random password.");
             this.btnGeneratePassword.UseVisualStyleBackColor = true;
-            this.btnGeneratePassword.Click += new System.EventHandler(this.Button1_Click);
+            this.btnGeneratePassword.Click += new System.EventHandler(this.btnGeneratePassword_Click);
             // 
             // pbCategorySave
             // 
