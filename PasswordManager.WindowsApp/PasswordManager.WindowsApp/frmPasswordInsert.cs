@@ -204,5 +204,29 @@ namespace PasswordManager.WindowsApp
             }
 
         }
+
+        private void BtnDomainPasteFromClip_Click(object sender, EventArgs e)
+        {
+            if (Clipboard.GetText() != null)
+            {
+                tbWebsiteDomain.Text = Clipboard.GetText();
+            }
+        }
+
+        private void BtnUsernamePasteFromClip_Click(object sender, EventArgs e)
+        {
+            if (Clipboard.GetText() != null)
+            {
+                tbWebsiteUsername.Text = Clipboard.GetText();
+            }
+        }
+
+        private void BtnPasswordPasteFromClip_Click(object sender, EventArgs e)
+        {
+            if (Clipboard.GetText() != null)
+            {
+                tbWebsitePassword.Text = Clipboard.GetText();
+            }
+        }
     }
 }
