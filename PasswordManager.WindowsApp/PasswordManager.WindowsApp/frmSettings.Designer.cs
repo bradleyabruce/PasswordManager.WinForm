@@ -176,6 +176,7 @@
             this.btnExportGo.TabIndex = 15;
             this.ttSettings.SetToolTip(this.btnExportGo, "Export Go");
             this.btnExportGo.UseVisualStyleBackColor = true;
+            this.btnExportGo.Click += new System.EventHandler(this.BtnExportGo_Click);
             // 
             // btnImportGo
             // 

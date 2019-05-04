@@ -18,6 +18,7 @@ namespace PasswordManager.WindowsApp
         dataSettings ds = new dataSettings();
         dataDelete dd = new dataDelete();
         dataLogin dl = new dataLogin();
+        dataExport de = new dataExport();
 
         public frmSettings()
         {
@@ -116,10 +117,41 @@ namespace PasswordManager.WindowsApp
                     tbImport.Enabled = true;
                     btnImportGo.Enabled = true;
 
-
                 }
             }
 
+        }
+
+        private void BtnExportGo_Click(object sender, EventArgs e)
+        {
+            //set path of file
+            string path = tbExport.Text + "\\Passwords.csv";
+
+            try
+            {
+
+                if (File.Exists(path))
+                {
+                    //do nothing
+                }
+
+                //write to file
+                using (FileStream fs = File.Create(path))
+                {
+                    Byte[] info = new UTF8Encoding(true).GetBytes(de.getCSVData(Program.MyStaticValues.userID.ToString()));
+                    // Add some information to the file.
+                    fs.Write(info, 0, info.Length);
+                }
+            }
+            catch(Exception ex)
+            {
+                lblAppVersion.Text = ex.ToString();
+            }
+
+            tbExport.Text = "";
+            tbExport.Enabled = false;
+            btnExportGo.Enabled = false;
+            MessageBox.Show("Export Successful!");
         }
     }
 }
