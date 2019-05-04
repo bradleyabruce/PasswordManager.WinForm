@@ -19,6 +19,7 @@ namespace PasswordManager.WindowsApp
         dataDelete dd = new dataDelete();
         dataLogin dl = new dataLogin();
         dataExport de = new dataExport();
+        dataInsert da = new dataInsert();
 
         public frmSettings()
         {
@@ -135,7 +136,7 @@ namespace PasswordManager.WindowsApp
                     //do nothing
                 }
 
-                //write to file
+                //write to file values from database
                 using (FileStream fs = File.Create(path))
                 {
                     Byte[] info = new UTF8Encoding(true).GetBytes(de.getCSVData(Program.MyStaticValues.userID.ToString()));
@@ -152,6 +153,93 @@ namespace PasswordManager.WindowsApp
             tbExport.Enabled = false;
             btnExportGo.Enabled = false;
             MessageBox.Show("Export Successful!");
+        }
+
+
+
+
+
+
+
+
+        private void BtnImportGo_Click(object sender, EventArgs e)
+        {
+
+            int counter = 1;
+
+            string WebsiteDomain = "";
+            string WebsiteUsername = "";
+            string WebsitePassword = "";
+
+            int WebsiteDomainID = 0;
+            int WebsiteUsernameID = 0;
+            int WebsitePasswordID = 0;
+
+            //get path
+            string path = tbImport.Text;
+
+            try
+            {
+                //loop through file from path and add them to database
+                using (StreamReader sr = File.OpenText(path))
+                {
+                    string line = "";
+
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        
+                        if(counter == 1)
+                        {
+                            //do nothing for header
+                        }
+                        // for the rest
+                        else
+                        {
+                            string[] values = line.Split(',');
+
+                            WebsiteDomain = values[0];
+                            WebsiteUsername = values[1];
+                            WebsitePassword = values[2];
+
+                            if (WebsiteDomain == "" || WebsiteUsername == "" || WebsitePassword == "")
+                            {
+                                //do not import
+                            }
+
+                            else
+                            {
+                                //insert into database and retrieve IDs
+                                WebsiteDomainID = da.insertWebsiteDomain(WebsiteDomain);
+                                WebsiteUsernameID = da.insertWebsiteUsername(WebsiteUsername);
+                                WebsitePasswordID = da.insertWebsitePassword(WebsitePassword);
+
+                                //insert entry
+                                da.insertEntry(Program.MyStaticValues.userID, WebsiteDomainID, WebsiteUsernameID, WebsitePasswordID, 0);
+
+                               
+                            }
+
+                        }
+
+                        counter++;
+
+                    }
+
+                    tbImport.Enabled = false;
+                    tbImport.Text = "";
+                    btnImportGo.Enabled = false;
+                    MessageBox.Show("Import Success!");
+
+                    //refresh password count label
+                    lblPasswordCount.Text = ds.getEntriesToDelete(Program.MyStaticValues.userID.ToString()).Count().ToString();
+
+                }
+            }
+
+            catch(Exception ex)
+            {
+                lblAppVersion.Text = ex.ToString();
+            }
         }
     }
 }

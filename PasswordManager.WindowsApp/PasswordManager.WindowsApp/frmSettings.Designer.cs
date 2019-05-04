@@ -49,6 +49,9 @@
             this.panel3 = new System.Windows.Forms.Panel();
             this.lblWarning = new System.Windows.Forms.Label();
             this.panel4 = new System.Windows.Forms.Panel();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
             this.tbExport = new System.Windows.Forms.TextBox();
             this.tbImport = new System.Windows.Forms.TextBox();
             this.lblTitleData = new System.Windows.Forms.Label();
@@ -57,9 +60,6 @@
             this.label2 = new System.Windows.Forms.Label();
             this.lblAppVersion = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
@@ -188,6 +188,7 @@
             this.btnImportGo.TabIndex = 14;
             this.ttSettings.SetToolTip(this.btnImportGo, "Import Go");
             this.btnImportGo.UseVisualStyleBackColor = true;
+            this.btnImportGo.Click += new System.EventHandler(this.BtnImportGo_Click);
             // 
             // btnBack
             // 
@@ -269,6 +270,33 @@
             this.panel4.Size = new System.Drawing.Size(338, 202);
             this.panel4.TabIndex = 13;
             // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(133, 178);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(198, 13);
+            this.label6.TabIndex = 18;
+            this.label6.Text = "Warning! This action can not be undone";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(110, 102);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(141, 13);
+            this.label5.TabIndex = 17;
+            this.label5.Text = "Select Folder to export file to";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(110, 44);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(126, 13);
+            this.label3.TabIndex = 16;
+            this.label3.Text = "Select File to Import From";
+            // 
             // tbExport
             // 
             this.tbExport.Enabled = false;
@@ -338,33 +366,6 @@
             this.label4.Size = new System.Drawing.Size(67, 13);
             this.label4.TabIndex = 15;
             this.label4.Text = "App Version:";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(110, 44);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(126, 13);
-            this.label3.TabIndex = 16;
-            this.label3.Text = "Select File to Import From";
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(110, 102);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(141, 13);
-            this.label5.TabIndex = 17;
-            this.label5.Text = "Select Folder to export file to";
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(133, 178);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(198, 13);
-            this.label6.TabIndex = 18;
-            this.label6.Text = "Warning! This action can not be undone";
             // 
             // frmSettings
             // 
