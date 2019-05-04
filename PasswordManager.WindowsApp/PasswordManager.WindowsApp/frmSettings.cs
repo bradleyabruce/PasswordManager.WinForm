@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,6 +17,7 @@ namespace PasswordManager.WindowsApp
 
         dataSettings ds = new dataSettings();
         dataDelete dd = new dataDelete();
+        dataLogin dl = new dataLogin();
 
         public frmSettings()
         {
@@ -24,9 +26,16 @@ namespace PasswordManager.WindowsApp
 
         private void FrmSettings_Load(object sender, EventArgs e)
         {
-
+            //get username
             lblUsername.Text = ds.getUsername(Program.MyStaticValues.userID.ToString());
+
+            //get password count
             lblPasswordCount.Text = ds.getEntriesToDelete(Program.MyStaticValues.userID.ToString()).Count().ToString();
+
+            //get serveraddress
+            string connString = dl.getConnectionString();
+            string ip = connString.Split(':', ',')[1];
+            lblServerAddress.Text = ip;
         }
 
 
@@ -70,6 +79,46 @@ namespace PasswordManager.WindowsApp
 
             //reload count label
             lblPasswordCount.Text = ds.getEntriesToDelete(Program.MyStaticValues.userID.ToString()).Count().ToString();
+
+        }
+
+        private void BtnExport_Click(object sender, EventArgs e)
+        {
+            using (var fbd = new FolderBrowserDialog())
+            {
+                DialogResult result = fbd.ShowDialog();
+
+                if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
+                {
+                    //string[] files = Directory.GetFiles(fbd.SelectedPath);
+                    //System.Windows.Forms.MessageBox.Show("Files found: " + files.Length.ToString(), "Message");
+                    tbExport.Text = fbd.SelectedPath;
+                    tbExport.Enabled = true;
+                    btnExportGo.Enabled = true;
+                    
+
+                }
+            }
+        }
+
+        private void BtnImport_Click(object sender, EventArgs e)
+        {
+            using (var ofd = new OpenFileDialog())
+            {
+
+                ofd.Filter = "CSV files (*.csv)|*.csv";
+                DialogResult result = ofd.ShowDialog();
+
+                if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(ofd.FileName))
+                {
+                    
+                    tbImport.Text = ofd.FileName;
+                    tbImport.Enabled = true;
+                    btnImportGo.Enabled = true;
+
+
+                }
+            }
 
         }
     }
