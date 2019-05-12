@@ -195,7 +195,8 @@ namespace PasswordManager.WindowsApp
                 pbCategorySave.Visible = false;
 
                 userTextChange = true;
-                
+                btnCancel.Enabled = false;
+                btnUpdate.Enabled = false;
             }
         }
 
@@ -572,6 +573,8 @@ namespace PasswordManager.WindowsApp
                 String path = "..\\..\\Resources\\star.png";
                 btnFavorite.Image = Image.FromFile(path);
             }
+
+            MessageBox.Show("Coming Soon");
 
         }
 

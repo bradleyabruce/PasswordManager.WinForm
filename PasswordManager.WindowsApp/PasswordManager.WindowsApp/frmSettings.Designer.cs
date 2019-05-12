@@ -40,8 +40,6 @@
             this.lblPasswordCount = new System.Windows.Forms.Label();
             this.lblPasswordCountStatus = new System.Windows.Forms.Label();
             this.ttSettings = new System.Windows.Forms.ToolTip(this.components);
-            this.btnExportGo = new System.Windows.Forms.Button();
-            this.btnImportGo = new System.Windows.Forms.Button();
             this.btnBack = new System.Windows.Forms.Button();
             this.btnDeleteAccount = new System.Windows.Forms.Button();
             this.btnChangePassword = new System.Windows.Forms.Button();
@@ -52,8 +50,6 @@
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.tbExport = new System.Windows.Forms.TextBox();
-            this.tbImport = new System.Windows.Forms.TextBox();
             this.lblTitleData = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.lblServerAddress = new System.Windows.Forms.Label();
@@ -128,7 +124,7 @@
             // 
             // btnExport
             // 
-            this.btnExport.Location = new System.Drawing.Point(4, 95);
+            this.btnExport.Location = new System.Drawing.Point(4, 69);
             this.btnExport.Name = "btnExport";
             this.btnExport.Size = new System.Drawing.Size(100, 26);
             this.btnExport.TabIndex = 6;
@@ -139,7 +135,7 @@
             // 
             // btnDelete
             // 
-            this.btnDelete.Location = new System.Drawing.Point(4, 171);
+            this.btnDelete.Location = new System.Drawing.Point(4, 101);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(123, 26);
             this.btnDelete.TabIndex = 5;
@@ -166,30 +162,6 @@
             this.lblPasswordCountStatus.TabIndex = 3;
             this.lblPasswordCountStatus.Text = "Number of Passwords:";
             // 
-            // btnExportGo
-            // 
-            this.btnExportGo.Enabled = false;
-            this.btnExportGo.Image = global::PasswordManager.WindowsApp.Properties.Resources.enter;
-            this.btnExportGo.Location = new System.Drawing.Point(307, 123);
-            this.btnExportGo.Name = "btnExportGo";
-            this.btnExportGo.Size = new System.Drawing.Size(26, 26);
-            this.btnExportGo.TabIndex = 15;
-            this.ttSettings.SetToolTip(this.btnExportGo, "Export Go");
-            this.btnExportGo.UseVisualStyleBackColor = true;
-            this.btnExportGo.Click += new System.EventHandler(this.BtnExportGo_Click);
-            // 
-            // btnImportGo
-            // 
-            this.btnImportGo.Enabled = false;
-            this.btnImportGo.Image = global::PasswordManager.WindowsApp.Properties.Resources.enter;
-            this.btnImportGo.Location = new System.Drawing.Point(307, 65);
-            this.btnImportGo.Name = "btnImportGo";
-            this.btnImportGo.Size = new System.Drawing.Size(26, 26);
-            this.btnImportGo.TabIndex = 14;
-            this.ttSettings.SetToolTip(this.btnImportGo, "Import Go");
-            this.btnImportGo.UseVisualStyleBackColor = true;
-            this.btnImportGo.Click += new System.EventHandler(this.BtnImportGo_Click);
-            // 
             // btnBack
             // 
             this.btnBack.Image = global::PasswordManager.WindowsApp.Properties.Resources.back;
@@ -210,6 +182,7 @@
             this.btnDeleteAccount.Text = "Delete Account";
             this.ttSettings.SetToolTip(this.btnDeleteAccount, "Delete Account");
             this.btnDeleteAccount.UseVisualStyleBackColor = true;
+            this.btnDeleteAccount.Click += new System.EventHandler(this.BtnDeleteAccount_Click);
             // 
             // btnChangePassword
             // 
@@ -220,6 +193,7 @@
             this.btnChangePassword.Text = "Change Account Password";
             this.ttSettings.SetToolTip(this.btnChangePassword, "Change Account Password");
             this.btnChangePassword.UseVisualStyleBackColor = true;
+            this.btnChangePassword.Click += new System.EventHandler(this.BtnChangePassword_Click);
             // 
             // lblTitle
             // 
@@ -236,7 +210,7 @@
             this.panel3.Controls.Add(this.btnChangePassword);
             this.panel3.Controls.Add(this.lblWarning);
             this.panel3.Controls.Add(this.btnDeleteAccount);
-            this.panel3.Location = new System.Drawing.Point(12, 386);
+            this.panel3.Location = new System.Drawing.Point(12, 317);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(338, 66);
             this.panel3.TabIndex = 11;
@@ -256,10 +230,6 @@
             this.panel4.Controls.Add(this.label6);
             this.panel4.Controls.Add(this.label5);
             this.panel4.Controls.Add(this.label3);
-            this.panel4.Controls.Add(this.btnExportGo);
-            this.panel4.Controls.Add(this.btnImportGo);
-            this.panel4.Controls.Add(this.tbExport);
-            this.panel4.Controls.Add(this.tbImport);
             this.panel4.Controls.Add(this.btnExport);
             this.panel4.Controls.Add(this.btnImport);
             this.panel4.Controls.Add(this.lblPasswordCount);
@@ -267,13 +237,13 @@
             this.panel4.Controls.Add(this.lblPasswordCountStatus);
             this.panel4.Location = new System.Drawing.Point(11, 143);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(338, 202);
+            this.panel4.Size = new System.Drawing.Size(338, 137);
             this.panel4.TabIndex = 13;
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(133, 178);
+            this.label6.Location = new System.Drawing.Point(133, 108);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(198, 13);
             this.label6.TabIndex = 18;
@@ -282,7 +252,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(110, 102);
+            this.label5.Location = new System.Drawing.Point(110, 76);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(141, 13);
             this.label5.TabIndex = 17;
@@ -297,22 +267,6 @@
             this.label3.TabIndex = 16;
             this.label3.Text = "Select File to Import From";
             // 
-            // tbExport
-            // 
-            this.tbExport.Enabled = false;
-            this.tbExport.Location = new System.Drawing.Point(4, 127);
-            this.tbExport.Name = "tbExport";
-            this.tbExport.Size = new System.Drawing.Size(297, 20);
-            this.tbExport.TabIndex = 9;
-            // 
-            // tbImport
-            // 
-            this.tbImport.Enabled = false;
-            this.tbImport.Location = new System.Drawing.Point(4, 69);
-            this.tbImport.Name = "tbImport";
-            this.tbImport.Size = new System.Drawing.Size(297, 20);
-            this.tbImport.TabIndex = 8;
-            // 
             // lblTitleData
             // 
             this.lblTitleData.AutoSize = true;
@@ -325,7 +279,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(8, 464);
+            this.label1.Location = new System.Drawing.Point(9, 398);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(82, 13);
             this.label1.TabIndex = 3;
@@ -334,7 +288,7 @@
             // lblServerAddress
             // 
             this.lblServerAddress.AutoSize = true;
-            this.lblServerAddress.Location = new System.Drawing.Point(96, 464);
+            this.lblServerAddress.Location = new System.Drawing.Point(97, 398);
             this.lblServerAddress.Name = "lblServerAddress";
             this.lblServerAddress.Size = new System.Drawing.Size(24, 13);
             this.lblServerAddress.TabIndex = 4;
@@ -343,7 +297,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(9, 370);
+            this.label2.Location = new System.Drawing.Point(10, 301);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(39, 13);
             this.label2.TabIndex = 0;
@@ -352,7 +306,7 @@
             // lblAppVersion
             // 
             this.lblAppVersion.AutoSize = true;
-            this.lblAppVersion.Location = new System.Drawing.Point(81, 486);
+            this.lblAppVersion.Location = new System.Drawing.Point(97, 421);
             this.lblAppVersion.Name = "lblAppVersion";
             this.lblAppVersion.Size = new System.Drawing.Size(24, 13);
             this.lblAppVersion.TabIndex = 14;
@@ -361,7 +315,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(8, 486);
+            this.label4.Location = new System.Drawing.Point(10, 421);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(67, 13);
             this.label4.TabIndex = 15;
@@ -371,7 +325,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(362, 508);
+            this.ClientSize = new System.Drawing.Size(362, 455);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.lblAppVersion);
             this.Controls.Add(this.lblServerAddress);
@@ -415,10 +369,6 @@
         private System.Windows.Forms.Label lblTitle;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Panel panel4;
-        private System.Windows.Forms.Button btnExportGo;
-        private System.Windows.Forms.Button btnImportGo;
-        private System.Windows.Forms.TextBox tbExport;
-        private System.Windows.Forms.TextBox tbImport;
         private System.Windows.Forms.Label lblTitleData;
         private System.Windows.Forms.Label lblWarning;
         private System.Windows.Forms.Button btnDeleteAccount;

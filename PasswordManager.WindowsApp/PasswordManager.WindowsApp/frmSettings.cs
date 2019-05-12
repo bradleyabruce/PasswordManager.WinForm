@@ -84,162 +84,181 @@ namespace PasswordManager.WindowsApp
 
         }
 
+
+
+
+
+
+
+        //when export button is pressed
         private void BtnExport_Click(object sender, EventArgs e)
         {
+
+            //allow user to select folder to put file to
             using (var fbd = new FolderBrowserDialog())
             {
                 DialogResult result = fbd.ShowDialog();
 
+                //after selection export the data
                 if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
                 {
-                    //string[] files = Directory.GetFiles(fbd.SelectedPath);
-                    //System.Windows.Forms.MessageBox.Show("Files found: " + files.Length.ToString(), "Message");
-                    tbExport.Text = fbd.SelectedPath;
-                    tbExport.Enabled = true;
-                    btnExportGo.Enabled = true;
-                    
+
+                    //set path of file
+                    string path = fbd.SelectedPath + "\\Passwords.csv";
+
+                    try
+                    {
+
+                        if (File.Exists(path))
+                        {
+                           //
+                        }
+
+
+                        //write to file values from database
+                        using (FileStream fs = File.Create(path))
+                        {
+                            Byte[] info = new UTF8Encoding(true).GetBytes(de.getCSVData(Program.MyStaticValues.userID.ToString()));
+                            // Add some information to the file.
+                            fs.Write(info, 0, info.Length);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        lblAppVersion.Text = ex.ToString();
+                    }
+
+                    MessageBox.Show("Export Successful!");
 
                 }
             }
         }
 
+
+
+
+        //when import button is pressed
         private void BtnImport_Click(object sender, EventArgs e)
         {
+
+            //show the user a prompt to allow the user to select a file
             using (var ofd = new OpenFileDialog())
             {
 
                 ofd.Filter = "CSV files (*.csv)|*.csv";
                 DialogResult result = ofd.ShowDialog();
 
+
+                //when the file is selected import the file
                 if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(ofd.FileName))
                 {
-                    
-                    tbImport.Text = ofd.FileName;
-                    tbImport.Enabled = true;
-                    btnImportGo.Enabled = true;
 
-                }
-            }
+                    int rowCounter = 1;
+                    int importCounter = 0;
 
-        }
+                    string WebsiteDomain = "";
+                    string WebsiteUsername = "";
+                    string WebsitePassword = "";
 
-        private void BtnExportGo_Click(object sender, EventArgs e)
-        {
-            //set path of file
-            string path = tbExport.Text + "\\Passwords.csv";
+                    int WebsiteDomainID = 0;
+                    int WebsiteUsernameID = 0;
+                    int WebsitePasswordID = 0;
 
-            try
-            {
+                    //get path
+                    string path = ofd.FileName;
 
-                if (File.Exists(path))
-                {
-                    //do nothing
-                }
-
-                //write to file values from database
-                using (FileStream fs = File.Create(path))
-                {
-                    Byte[] info = new UTF8Encoding(true).GetBytes(de.getCSVData(Program.MyStaticValues.userID.ToString()));
-                    // Add some information to the file.
-                    fs.Write(info, 0, info.Length);
-                }
-            }
-            catch(Exception ex)
-            {
-                lblAppVersion.Text = ex.ToString();
-            }
-
-            tbExport.Text = "";
-            tbExport.Enabled = false;
-            btnExportGo.Enabled = false;
-            MessageBox.Show("Export Successful!");
-        }
-
-
-
-
-
-
-
-
-        private void BtnImportGo_Click(object sender, EventArgs e)
-        {
-
-            int counter = 1;
-
-            string WebsiteDomain = "";
-            string WebsiteUsername = "";
-            string WebsitePassword = "";
-
-            int WebsiteDomainID = 0;
-            int WebsiteUsernameID = 0;
-            int WebsitePasswordID = 0;
-
-            //get path
-            string path = tbImport.Text;
-
-            try
-            {
-                //loop through file from path and add them to database
-                using (StreamReader sr = File.OpenText(path))
-                {
-                    string line = "";
-
-                    while ((line = sr.ReadLine()) != null)
+                    try
                     {
-                        
-                        if(counter == 1)
+                        //loop through file from path and add them to database
+                        using (StreamReader sr = File.OpenText(path))
                         {
-                            //do nothing for header
-                        }
-                        // for the rest
-                        else
-                        {
-                            string[] values = line.Split(',');
+                            string line = "";
 
-                            WebsiteDomain = values[0];
-                            WebsiteUsername = values[1];
-                            WebsitePassword = values[2];
-
-                            if (WebsiteDomain == "" || WebsiteUsername == "" || WebsitePassword == "")
+                            while ((line = sr.ReadLine()) != null)
                             {
-                                //do not import
+
+                                if (rowCounter == 1)
+                                {
+                                    //do nothing for header
+                                }
+                                // for the rest
+                                else
+                                {
+                                    string[] values = line.Split(',');
+
+                                    WebsiteDomain = values[0];
+                                    WebsiteUsername = values[1];
+                                    WebsitePassword = values[2];
+
+                                    if (WebsiteDomain == "" || WebsiteUsername == "" || WebsitePassword == "")
+                                    {
+                                        //do not import
+                                    }
+
+                                    else
+                                    {
+                                        //insert into database and retrieve IDs
+                                        WebsiteDomainID = da.insertWebsiteDomain(WebsiteDomain);
+                                        WebsiteUsernameID = da.insertWebsiteUsername(WebsiteUsername);
+                                        WebsitePasswordID = da.insertWebsitePassword(WebsitePassword);
+
+                                        //insert entry
+                                        da.insertEntry(Program.MyStaticValues.userID, WebsiteDomainID, WebsiteUsernameID, WebsitePasswordID, 0);
+
+
+                                    }
+
+                                    importCounter++;
+
+                                }
+
+                                rowCounter++;
+                                
                             }
 
+
+                            if (importCounter == 0)
+                            {
+                                MessageBox.Show("No passwords imported");
+                            }
+                            else if(importCounter == 1)
+                            {
+                                MessageBox.Show(importCounter + " password imported");
+                            }
                             else
                             {
-                                //insert into database and retrieve IDs
-                                WebsiteDomainID = da.insertWebsiteDomain(WebsiteDomain);
-                                WebsiteUsernameID = da.insertWebsiteUsername(WebsiteUsername);
-                                WebsitePasswordID = da.insertWebsitePassword(WebsitePassword);
-
-                                //insert entry
-                                da.insertEntry(Program.MyStaticValues.userID, WebsiteDomainID, WebsiteUsernameID, WebsitePasswordID, 0);
-
-                               
+                                MessageBox.Show(importCounter + " passwords imported");
                             }
 
+                            //refresh password count label
+                            lblPasswordCount.Text = ds.getEntriesToDelete(Program.MyStaticValues.userID.ToString()).Count().ToString();
+
                         }
-
-                        counter++;
-
                     }
 
-                    tbImport.Enabled = false;
-                    tbImport.Text = "";
-                    btnImportGo.Enabled = false;
-                    MessageBox.Show("Import Success!");
+                    catch (Exception ex)
+                    {
+                        lblAppVersion.Text = ex.ToString();
+                    }
 
-                    //refresh password count label
-                    lblPasswordCount.Text = ds.getEntriesToDelete(Program.MyStaticValues.userID.ToString()).Count().ToString();
+
 
                 }
             }
 
-            catch(Exception ex)
-            {
-                lblAppVersion.Text = ex.ToString();
-            }
+        }
+
+
+
+
+        private void BtnChangePassword_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Coming Soon");
+        }
+
+        private void BtnDeleteAccount_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Coming Soon");
         }
     }
 }
