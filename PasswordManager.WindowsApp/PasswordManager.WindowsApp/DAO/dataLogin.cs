@@ -1,8 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Dynamic;
 using System.IO;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using System.Web.Script;
+using System.Web.Script.Serialization;
 
 namespace PasswordManager.WindowsApp.DAO
 {
@@ -74,6 +79,47 @@ namespace PasswordManager.WindowsApp.DAO
         //connect to database with login
         public bool loginToDatabase(string email, string hashedPassword)
         {
+            string userID;
+            string LoginEmail;
+            string LoginPassword;
+
+            string json = "{\"email\": \"" + email + "\", \"password\": \"" + hashedPassword + "\"}";
+
+            byte[] jsonArray = Encoding.UTF8.GetBytes(json);
+            int length = jsonArray.Length;
+            
+            string url = "http://74.140.136.128:1337/api/login";
+            Uri uri = new Uri(url);
+            var builder = new UriBuilder(uri);
+            builder.Port = 1337;
+            uri = builder.Uri;
+
+
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+            request.Method = "POST";
+            request.ContentType = "application/json";
+
+            try
+            {
+                using (var stream = request.GetRequestStream())
+                {
+                    stream.Write(jsonArray, 0, length);
+                }
+            }
+            catch(Exception e)
+            {
+                return false;
+            }
+
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            string responseString = new StreamReader(response.GetResponseStream()).ReadToEnd();
+
+            Dictionary<string, string> JSONObject = new JavaScriptSerializer().Deserialize<Dictionary<string, string>>(responseString);
+            userID = JSONObject["UserID"];
+            LoginEmail = JSONObject["UserLoginEmail"];
+            LoginPassword = JSONObject["UserLoginPassword"];
+
+            /*
             //store userID
             string userID = "";
 
@@ -122,6 +168,7 @@ namespace PasswordManager.WindowsApp.DAO
             //store user ID in global spot
             //return true   
             Program.MyStaticValues.userID = int.Parse(userID);
+            */
             return true;
         }
 
