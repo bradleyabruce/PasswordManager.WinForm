@@ -30,7 +30,17 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnPasswordPasteFromClip = new System.Windows.Forms.Button();
+            this.btnUsernamePasteFromClip = new System.Windows.Forms.Button();
+            this.btnDomainPasteFromClip = new System.Windows.Forms.Button();
+            this.btnChangeDomain = new System.Windows.Forms.Button();
+            this.btnClear = new System.Windows.Forms.Button();
+            this.btnCopyUsername = new System.Windows.Forms.Button();
+            this.btnPasswordHide = new System.Windows.Forms.Button();
+            this.btnCopyPassword = new System.Windows.Forms.Button();
+            this.btnGenerate = new System.Windows.Forms.Button();
             this.lblError = new System.Windows.Forms.Label();
+            this.btnAdd = new System.Windows.Forms.Button();
             this.cbCategory = new System.Windows.Forms.ComboBox();
             this.lblCategory = new System.Windows.Forms.Label();
             this.tbWebsitePassword = new System.Windows.Forms.TextBox();
@@ -42,16 +52,6 @@
             this.ttInsert = new System.Windows.Forms.ToolTip(this.components);
             this.pbStatus = new System.Windows.Forms.PictureBox();
             this.btnBack = new System.Windows.Forms.Button();
-            this.btnDomainPasteFromClip = new System.Windows.Forms.Button();
-            this.btnChangeDomain = new System.Windows.Forms.Button();
-            this.btnClear = new System.Windows.Forms.Button();
-            this.btnCopyUsername = new System.Windows.Forms.Button();
-            this.btnPasswordHide = new System.Windows.Forms.Button();
-            this.btnCopyPassword = new System.Windows.Forms.Button();
-            this.btnGenerate = new System.Windows.Forms.Button();
-            this.btnAdd = new System.Windows.Forms.Button();
-            this.btnUsernamePasteFromClip = new System.Windows.Forms.Button();
-            this.btnPasswordPasteFromClip = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbStatus)).BeginInit();
             this.SuspendLayout();
@@ -82,6 +82,105 @@
             this.panel1.Size = new System.Drawing.Size(387, 304);
             this.panel1.TabIndex = 0;
             // 
+            // btnPasswordPasteFromClip
+            // 
+            this.btnPasswordPasteFromClip.Image = global::PasswordManager.WindowsApp.Properties.Resources.pasteFromClipboard;
+            this.btnPasswordPasteFromClip.Location = new System.Drawing.Point(355, 146);
+            this.btnPasswordPasteFromClip.Name = "btnPasswordPasteFromClip";
+            this.btnPasswordPasteFromClip.Size = new System.Drawing.Size(26, 26);
+            this.btnPasswordPasteFromClip.TabIndex = 19;
+            this.ttInsert.SetToolTip(this.btnPasswordPasteFromClip, "Paste from clipboard");
+            this.btnPasswordPasteFromClip.UseVisualStyleBackColor = true;
+            this.btnPasswordPasteFromClip.Click += new System.EventHandler(this.BtnPasswordPasteFromClip_Click);
+            // 
+            // btnUsernamePasteFromClip
+            // 
+            this.btnUsernamePasteFromClip.Image = global::PasswordManager.WindowsApp.Properties.Resources.pasteFromClipboard;
+            this.btnUsernamePasteFromClip.Location = new System.Drawing.Point(355, 85);
+            this.btnUsernamePasteFromClip.Name = "btnUsernamePasteFromClip";
+            this.btnUsernamePasteFromClip.Size = new System.Drawing.Size(26, 26);
+            this.btnUsernamePasteFromClip.TabIndex = 18;
+            this.ttInsert.SetToolTip(this.btnUsernamePasteFromClip, "Paste from clipboard");
+            this.btnUsernamePasteFromClip.UseVisualStyleBackColor = true;
+            this.btnUsernamePasteFromClip.Click += new System.EventHandler(this.BtnUsernamePasteFromClip_Click);
+            // 
+            // btnDomainPasteFromClip
+            // 
+            this.btnDomainPasteFromClip.Image = global::PasswordManager.WindowsApp.Properties.Resources.pasteFromClipboard;
+            this.btnDomainPasteFromClip.Location = new System.Drawing.Point(355, 27);
+            this.btnDomainPasteFromClip.Name = "btnDomainPasteFromClip";
+            this.btnDomainPasteFromClip.Size = new System.Drawing.Size(26, 26);
+            this.btnDomainPasteFromClip.TabIndex = 17;
+            this.ttInsert.SetToolTip(this.btnDomainPasteFromClip, "Paste from clipboard");
+            this.btnDomainPasteFromClip.UseVisualStyleBackColor = true;
+            this.btnDomainPasteFromClip.Click += new System.EventHandler(this.BtnDomainPasteFromClip_Click);
+            // 
+            // btnChangeDomain
+            // 
+            this.btnChangeDomain.Image = global::PasswordManager.WindowsApp.Properties.Resources.change;
+            this.btnChangeDomain.Location = new System.Drawing.Point(323, 27);
+            this.btnChangeDomain.Name = "btnChangeDomain";
+            this.btnChangeDomain.Size = new System.Drawing.Size(26, 26);
+            this.btnChangeDomain.TabIndex = 16;
+            this.ttInsert.SetToolTip(this.btnChangeDomain, "Get base domain from URL");
+            this.btnChangeDomain.UseVisualStyleBackColor = true;
+            this.btnChangeDomain.Click += new System.EventHandler(this.BtnChangeDomain_Click);
+            // 
+            // btnClear
+            // 
+            this.btnClear.Image = global::PasswordManager.WindowsApp.Properties.Resources.cancel;
+            this.btnClear.Location = new System.Drawing.Point(196, 265);
+            this.btnClear.Name = "btnClear";
+            this.btnClear.Size = new System.Drawing.Size(26, 26);
+            this.btnClear.TabIndex = 15;
+            this.ttInsert.SetToolTip(this.btnClear, "Clear Data");
+            this.btnClear.UseVisualStyleBackColor = true;
+            this.btnClear.Click += new System.EventHandler(this.BtnClear_Click);
+            // 
+            // btnCopyUsername
+            // 
+            this.btnCopyUsername.Image = global::PasswordManager.WindowsApp.Properties.Resources.clipboard;
+            this.btnCopyUsername.Location = new System.Drawing.Point(323, 85);
+            this.btnCopyUsername.Name = "btnCopyUsername";
+            this.btnCopyUsername.Size = new System.Drawing.Size(26, 26);
+            this.btnCopyUsername.TabIndex = 14;
+            this.ttInsert.SetToolTip(this.btnCopyUsername, "Copy username to clipboard");
+            this.btnCopyUsername.UseVisualStyleBackColor = true;
+            this.btnCopyUsername.Click += new System.EventHandler(this.BtnCopyUsername_Click);
+            // 
+            // btnPasswordHide
+            // 
+            this.btnPasswordHide.Image = global::PasswordManager.WindowsApp.Properties.Resources.hide;
+            this.btnPasswordHide.Location = new System.Drawing.Point(261, 146);
+            this.btnPasswordHide.Name = "btnPasswordHide";
+            this.btnPasswordHide.Size = new System.Drawing.Size(26, 26);
+            this.btnPasswordHide.TabIndex = 13;
+            this.ttInsert.SetToolTip(this.btnPasswordHide, "Toggle show/hide of password");
+            this.btnPasswordHide.UseVisualStyleBackColor = true;
+            this.btnPasswordHide.Click += new System.EventHandler(this.BtnPasswordHide_Click);
+            // 
+            // btnCopyPassword
+            // 
+            this.btnCopyPassword.Image = global::PasswordManager.WindowsApp.Properties.Resources.clipboard;
+            this.btnCopyPassword.Location = new System.Drawing.Point(325, 146);
+            this.btnCopyPassword.Name = "btnCopyPassword";
+            this.btnCopyPassword.Size = new System.Drawing.Size(26, 26);
+            this.btnCopyPassword.TabIndex = 12;
+            this.ttInsert.SetToolTip(this.btnCopyPassword, "Copy password to clipboard");
+            this.btnCopyPassword.UseVisualStyleBackColor = true;
+            this.btnCopyPassword.Click += new System.EventHandler(this.BtnCopyPassword_Click);
+            // 
+            // btnGenerate
+            // 
+            this.btnGenerate.Image = global::PasswordManager.WindowsApp.Properties.Resources.refresh;
+            this.btnGenerate.Location = new System.Drawing.Point(293, 146);
+            this.btnGenerate.Name = "btnGenerate";
+            this.btnGenerate.Size = new System.Drawing.Size(26, 26);
+            this.btnGenerate.TabIndex = 11;
+            this.ttInsert.SetToolTip(this.btnGenerate, "Generate new random password!");
+            this.btnGenerate.UseVisualStyleBackColor = true;
+            this.btnGenerate.Click += new System.EventHandler(this.BtnGenerate_Click);
+            // 
             // lblError
             // 
             this.lblError.AutoSize = true;
@@ -91,6 +190,17 @@
             this.lblError.TabIndex = 10;
             this.lblError.Text = "Domain, Username, and Password are all required";
             this.lblError.Visible = false;
+            // 
+            // btnAdd
+            // 
+            this.btnAdd.Image = global::PasswordManager.WindowsApp.Properties.Resources.save;
+            this.btnAdd.Location = new System.Drawing.Point(164, 265);
+            this.btnAdd.Name = "btnAdd";
+            this.btnAdd.Size = new System.Drawing.Size(26, 26);
+            this.btnAdd.TabIndex = 9;
+            this.ttInsert.SetToolTip(this.btnAdd, "Save Entry");
+            this.btnAdd.UseVisualStyleBackColor = true;
+            this.btnAdd.Click += new System.EventHandler(this.BtnAdd_Click);
             // 
             // cbCategory
             // 
@@ -176,116 +286,6 @@
             this.btnBack.UseVisualStyleBackColor = true;
             this.btnBack.Click += new System.EventHandler(this.BtnBack_Click);
             // 
-            // btnDomainPasteFromClip
-            // 
-            this.btnDomainPasteFromClip.Image = global::PasswordManager.WindowsApp.Properties.Resources.pasteFromClipboard;
-            this.btnDomainPasteFromClip.Location = new System.Drawing.Point(355, 27);
-            this.btnDomainPasteFromClip.Name = "btnDomainPasteFromClip";
-            this.btnDomainPasteFromClip.Size = new System.Drawing.Size(26, 26);
-            this.btnDomainPasteFromClip.TabIndex = 17;
-            this.ttInsert.SetToolTip(this.btnDomainPasteFromClip, "Paste from clipboard");
-            this.btnDomainPasteFromClip.UseVisualStyleBackColor = true;
-            this.btnDomainPasteFromClip.Click += new System.EventHandler(this.BtnDomainPasteFromClip_Click);
-            // 
-            // btnChangeDomain
-            // 
-            this.btnChangeDomain.Image = global::PasswordManager.WindowsApp.Properties.Resources.change;
-            this.btnChangeDomain.Location = new System.Drawing.Point(323, 27);
-            this.btnChangeDomain.Name = "btnChangeDomain";
-            this.btnChangeDomain.Size = new System.Drawing.Size(26, 26);
-            this.btnChangeDomain.TabIndex = 16;
-            this.ttInsert.SetToolTip(this.btnChangeDomain, "Get base domain from URL");
-            this.btnChangeDomain.UseVisualStyleBackColor = true;
-            this.btnChangeDomain.Click += new System.EventHandler(this.BtnChangeDomain_Click);
-            // 
-            // btnClear
-            // 
-            this.btnClear.Image = global::PasswordManager.WindowsApp.Properties.Resources.cancel;
-            this.btnClear.Location = new System.Drawing.Point(196, 265);
-            this.btnClear.Name = "btnClear";
-            this.btnClear.Size = new System.Drawing.Size(26, 26);
-            this.btnClear.TabIndex = 15;
-            this.ttInsert.SetToolTip(this.btnClear, "Clear Data");
-            this.btnClear.UseVisualStyleBackColor = true;
-            this.btnClear.Click += new System.EventHandler(this.BtnClear_Click);
-            // 
-            // btnCopyUsername
-            // 
-            this.btnCopyUsername.Image = global::PasswordManager.WindowsApp.Properties.Resources.clipboard;
-            this.btnCopyUsername.Location = new System.Drawing.Point(323, 85);
-            this.btnCopyUsername.Name = "btnCopyUsername";
-            this.btnCopyUsername.Size = new System.Drawing.Size(26, 26);
-            this.btnCopyUsername.TabIndex = 14;
-            this.ttInsert.SetToolTip(this.btnCopyUsername, "Copy username to clipboard");
-            this.btnCopyUsername.UseVisualStyleBackColor = true;
-            this.btnCopyUsername.Click += new System.EventHandler(this.BtnCopyUsername_Click);
-            // 
-            // btnPasswordHide
-            // 
-            this.btnPasswordHide.Image = global::PasswordManager.WindowsApp.Properties.Resources.hide;
-            this.btnPasswordHide.Location = new System.Drawing.Point(261, 146);
-            this.btnPasswordHide.Name = "btnPasswordHide";
-            this.btnPasswordHide.Size = new System.Drawing.Size(26, 26);
-            this.btnPasswordHide.TabIndex = 13;
-            this.ttInsert.SetToolTip(this.btnPasswordHide, "Toggle show/hide of password");
-            this.btnPasswordHide.UseVisualStyleBackColor = true;
-            this.btnPasswordHide.Click += new System.EventHandler(this.BtnPasswordHide_Click);
-            // 
-            // btnCopyPassword
-            // 
-            this.btnCopyPassword.Image = global::PasswordManager.WindowsApp.Properties.Resources.clipboard;
-            this.btnCopyPassword.Location = new System.Drawing.Point(325, 146);
-            this.btnCopyPassword.Name = "btnCopyPassword";
-            this.btnCopyPassword.Size = new System.Drawing.Size(26, 26);
-            this.btnCopyPassword.TabIndex = 12;
-            this.ttInsert.SetToolTip(this.btnCopyPassword, "Copy password to clipboard");
-            this.btnCopyPassword.UseVisualStyleBackColor = true;
-            this.btnCopyPassword.Click += new System.EventHandler(this.BtnCopyPassword_Click);
-            // 
-            // btnGenerate
-            // 
-            this.btnGenerate.Image = global::PasswordManager.WindowsApp.Properties.Resources.refresh;
-            this.btnGenerate.Location = new System.Drawing.Point(293, 146);
-            this.btnGenerate.Name = "btnGenerate";
-            this.btnGenerate.Size = new System.Drawing.Size(26, 26);
-            this.btnGenerate.TabIndex = 11;
-            this.ttInsert.SetToolTip(this.btnGenerate, "Generate new random password!");
-            this.btnGenerate.UseVisualStyleBackColor = true;
-            this.btnGenerate.Click += new System.EventHandler(this.BtnGenerate_Click);
-            // 
-            // btnAdd
-            // 
-            this.btnAdd.Image = global::PasswordManager.WindowsApp.Properties.Resources.save;
-            this.btnAdd.Location = new System.Drawing.Point(164, 265);
-            this.btnAdd.Name = "btnAdd";
-            this.btnAdd.Size = new System.Drawing.Size(26, 26);
-            this.btnAdd.TabIndex = 9;
-            this.ttInsert.SetToolTip(this.btnAdd, "Save Entry");
-            this.btnAdd.UseVisualStyleBackColor = true;
-            this.btnAdd.Click += new System.EventHandler(this.BtnAdd_Click);
-            // 
-            // btnUsernamePasteFromClip
-            // 
-            this.btnUsernamePasteFromClip.Image = global::PasswordManager.WindowsApp.Properties.Resources.pasteFromClipboard;
-            this.btnUsernamePasteFromClip.Location = new System.Drawing.Point(355, 85);
-            this.btnUsernamePasteFromClip.Name = "btnUsernamePasteFromClip";
-            this.btnUsernamePasteFromClip.Size = new System.Drawing.Size(26, 26);
-            this.btnUsernamePasteFromClip.TabIndex = 18;
-            this.ttInsert.SetToolTip(this.btnUsernamePasteFromClip, "Paste from clipboard");
-            this.btnUsernamePasteFromClip.UseVisualStyleBackColor = true;
-            this.btnUsernamePasteFromClip.Click += new System.EventHandler(this.BtnUsernamePasteFromClip_Click);
-            // 
-            // btnPasswordPasteFromClip
-            // 
-            this.btnPasswordPasteFromClip.Image = global::PasswordManager.WindowsApp.Properties.Resources.pasteFromClipboard;
-            this.btnPasswordPasteFromClip.Location = new System.Drawing.Point(355, 146);
-            this.btnPasswordPasteFromClip.Name = "btnPasswordPasteFromClip";
-            this.btnPasswordPasteFromClip.Size = new System.Drawing.Size(26, 26);
-            this.btnPasswordPasteFromClip.TabIndex = 19;
-            this.ttInsert.SetToolTip(this.btnPasswordPasteFromClip, "Paste from clipboard");
-            this.btnPasswordPasteFromClip.UseVisualStyleBackColor = true;
-            this.btnPasswordPasteFromClip.Click += new System.EventHandler(this.BtnPasswordPasteFromClip_Click);
-            // 
             // frmPasswordInsert
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -296,6 +296,7 @@
             this.Controls.Add(this.panel1);
             this.Name = "frmPasswordInsert";
             this.Text = "frmPasswordInsert";
+            this.Load += new System.EventHandler(this.frmPasswordInsert_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbStatus)).EndInit();

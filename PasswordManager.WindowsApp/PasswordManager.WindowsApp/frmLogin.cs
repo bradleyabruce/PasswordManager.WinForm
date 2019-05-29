@@ -1,6 +1,7 @@
 ﻿using PasswordManager.WindowsApp.DAO;
 using System;
 using System.Drawing;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 
@@ -20,10 +21,15 @@ namespace PasswordManager.WindowsApp
 
         //on start up of the application
         //set database status
-        private void FrmLogin_Load(object sender, EventArgs e)
+        private async void FrmLogin_Load(object sender, EventArgs e)
         {
 
-            if (dl.databaseCheck() == true)
+            Task<bool> databaseCheckAsync = dl.databaseCheck();
+            //show loading icon
+            bool databaseCheckSuccess = await databaseCheckAsync;
+
+                                 
+            if (databaseCheckSuccess == true)
             {
                 String path = "..\\..\\Resources\\Connected.png";
                 pbStatus.Image = Image.FromFile(path);
@@ -37,13 +43,14 @@ namespace PasswordManager.WindowsApp
                 ttLogin.SetToolTip(pbStatus, "You are not connected!");
                 btnLogin.Enabled = false;
             }
+            //hide loading icon
 
         }
 
 /********************** Login *****************************/
   
         //on login button press
-        private void BtnLogin_Click(object sender, EventArgs e)
+        private async void BtnLogin_Click(object sender, EventArgs e)
         {
 
             //get username and password from textbox
@@ -78,9 +85,14 @@ namespace PasswordManager.WindowsApp
                     //hash password
                     string hashedPass = dl.EncodePassword(password);
 
-                    //if the login is sucessful, close the login screen and open next form 
+                    Task<bool> loginAsync = dl.loginToDatabase(username, hashedPass);
+
+                    //show loading icon...
+
+                    bool loginSuccess = await loginAsync;
                     
-                    if (dl.loginToDatabase(username, hashedPass) == true)
+                    
+                    if (loginSuccess)
                     {
               
                         //create new form to open
@@ -103,6 +115,8 @@ namespace PasswordManager.WindowsApp
 
                     }
                     
+                    //hide loading bar...
+
                 }//end password blank   
 
             }//end username blank

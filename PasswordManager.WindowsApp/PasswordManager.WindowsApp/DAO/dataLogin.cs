@@ -9,6 +9,7 @@ using System.Net;
 using System.Runtime.Serialization.Json;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web.Script;
 using System.Web.Script.Serialization;
 
@@ -19,12 +20,13 @@ namespace PasswordManager.WindowsApp.DAO
     {
 
         public string loginUrl = "http://74.140.136.128:1337/api/login";
-        public string checkUrl = "http://http://74.140.136.128:1337/product"
+        public string checkUrl = "http://http://74.140.136.128:1337/product";
 
 
         //this class checks the sql database and returns true if the server is online and false if not  
-        public bool databaseCheck()
+        public async Task<bool> databaseCheck()
         {
+            bool database = false;
 
             string connectionString = getConnectionString();
 
@@ -32,15 +34,24 @@ namespace PasswordManager.WindowsApp.DAO
             {
                 SqlConnection conn = new SqlConnection(connectionString);
 
-                conn.Open();
+                await Task.Run(() => conn.Open());
                 
             }
             catch(Exception e)
             {
-                return false;
+                database = false;
             }
 
-            return true; ;
+            database = true;
+
+            if (database)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
 
@@ -78,61 +89,28 @@ namespace PasswordManager.WindowsApp.DAO
 
 
         //connect to database with login
-        public bool loginToDatabase(string email, string hashedPassword)
+        public async Task<bool> loginToDatabase(string email, string hashedPassword)
         {
 
             string userID = "";
             string userEmail = "";
             string userPassword = "";
-                        
-            string json = "{\"email\": \"" + email + "\", \"password\": \"" + hashedPassword + "\"}";
-
             string result;
 
-            Uri uri = new Uri(loginUrl);
-            var builder = new UriBuilder(uri);
-            builder.Port = 1337;
-            uri = builder.Uri;
+            string json = "{\"email\": \"" + email + "\", \"password\": \"" + hashedPassword + "\"}";
 
+            HttpWebRequest request = await Task.Run(() => SendLoginHttp(json));
 
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
-            request.Method = "POST";
-            request.ContentType = "application/json";
+            //validate request
 
-            //write to http
-            try
-            {
-                using (var streamWriter = new StreamWriter(request.GetRequestStream()))
-                {
-                    streamWriter.Write(json);
-                    streamWriter.Flush();
-                    streamWriter.Close();
-                }
-            }
-            catch(Exception e)
-            {
-                return false;
-            }
+            LoginObject loginObject = await Task.Run(() => ReceiveResponse(request));
 
-            //get response
+            //validate response
 
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            userID = loginObject.UserID;
+            userEmail = loginObject.UserLoginEmail;
+            userPassword = loginObject.UserLoginPassword;
             
-            using (var streamReader = new StreamReader(response.GetResponseStream()))
-            {
-                result = streamReader.ReadToEnd();
-            }
-
-            var serializer = new JavaScriptSerializer();
-            var loginObjects = serializer.Deserialize<List<LoginObject>>(result);
-
-            foreach(var item in loginObjects)
-            {
-                userID = item.UserID;
-                userEmail = item.UserLoginEmail;
-                userPassword = item.UserLoginPassword;
-            }
-
             if(userEmail == email && userPassword == hashedPassword)
             {
 
@@ -155,6 +133,52 @@ namespace PasswordManager.WindowsApp.DAO
 
 
 
+        public HttpWebRequest SendLoginHttp(string json)
+        {
+
+            Uri uri = new Uri(loginUrl);
+            var builder = new UriBuilder(uri);
+            builder.Port = 1337;
+            uri = builder.Uri;
+
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+            request.Method = "POST";
+            request.ContentType = "application/json";
+
+            try
+            {
+                using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+                {
+                    streamWriter.Write(json);
+                    streamWriter.Flush();
+                    streamWriter.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+
+            return request;
+        }
+
+
+        public LoginObject ReceiveResponse(HttpWebRequest request)
+        {
+            string result;
+
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+            using (var streamReader = new StreamReader(response.GetResponseStream()))
+            {
+                result = streamReader.ReadToEnd();
+            }
+
+            var serializer = new JavaScriptSerializer();
+            var loginObjects = serializer.Deserialize<List<LoginObject>>(result);
+
+            return loginObjects[0];
+        }
 
 
 

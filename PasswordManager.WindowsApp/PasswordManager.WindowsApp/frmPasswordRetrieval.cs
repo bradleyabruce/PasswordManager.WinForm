@@ -46,23 +46,8 @@ namespace PasswordManager.WindowsApp
 
             userTextChange = false;
 
-            //check database status
-            if (dl.databaseCheck() == true)
-            {
-                String path = "..\\..\\Resources\\Connected.png";
-                pbStatus.Image = Image.FromFile(path);
-                ttRetrieve.SetToolTip(pbStatus, "You are connected!");
-            }
-            else
-            {
-                String path = "..\\..\\Resources\\notConnected.png";
-                pbStatus.Image = Image.FromFile(path);
-                ttRetrieve.SetToolTip(pbStatus, "You are not connected!");
-            }
-
-
             //set datagrid for all values
-            dataGridEntries.DataSource = dr.getEntries(0).Tables[0];
+            dataGridEntries.DataSource = dr.getEntries(0).Tables[0]; 
             dataGridEntries.Refresh();
 
             //hide ID column

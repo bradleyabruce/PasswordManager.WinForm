@@ -2,6 +2,7 @@
 using System;
 using System.Drawing;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace PasswordManager.WindowsApp
@@ -21,8 +22,16 @@ namespace PasswordManager.WindowsApp
         {
             InitializeComponent();
 
-            //check database status
-            if (dl.databaseCheck() == true)
+        }
+
+        private async void frmPasswordInsert_Load(object sender, EventArgs e)
+        {
+            Task<bool> databaseCheckAsync = dl.databaseCheck();
+            //show loading icon
+            bool databaseCheckSuccess = await databaseCheckAsync;
+
+
+            if (databaseCheckSuccess == true)
             {
                 String path = "..\\..\\Resources\\Connected.png";
                 pbStatus.Image = Image.FromFile(path);
@@ -34,14 +43,10 @@ namespace PasswordManager.WindowsApp
                 String path = "..\\..\\Resources\\notConnected.png";
                 pbStatus.Image = Image.FromFile(path);
                 ttInsert.SetToolTip(pbStatus, "You are not connected!");
-                
+                panel1.Enabled = false;
             }
-
-            cbCategory.DataSource = dr.getCategories();
-
+            //hide loading icon
         }
-
-
 
 
         //when back button is pressed
@@ -228,5 +233,7 @@ namespace PasswordManager.WindowsApp
                 tbWebsitePassword.Text = Clipboard.GetText();
             }
         }
+
+
     }
 }
