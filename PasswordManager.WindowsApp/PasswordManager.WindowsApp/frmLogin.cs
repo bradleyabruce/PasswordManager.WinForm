@@ -24,12 +24,9 @@ namespace PasswordManager.WindowsApp
         private async void FrmLogin_Load(object sender, EventArgs e)
         {
 
-            Task<bool> databaseCheckAsync = dl.databaseCheck();
-            //show loading icon
-            bool databaseCheckSuccess = await databaseCheckAsync;
+            bool databaseCheck = dl.databaseCheck();
 
-                                 
-            if (databaseCheckSuccess == true)
+            if (databaseCheck == true)
             {
                 String path = "..\\..\\Resources\\Connected.png";
                 pbStatus.Image = Image.FromFile(path);
@@ -43,7 +40,6 @@ namespace PasswordManager.WindowsApp
                 ttLogin.SetToolTip(pbStatus, "You are not connected!");
                 btnLogin.Enabled = false;
             }
-            //hide loading icon
 
         }
 

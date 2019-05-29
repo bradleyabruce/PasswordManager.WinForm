@@ -24,34 +24,24 @@ namespace PasswordManager.WindowsApp.DAO
 
 
         //this class checks the sql database and returns true if the server is online and false if not  
-        public async Task<bool> databaseCheck()
+        public bool databaseCheck()
         {
-            bool database = false;
-
+           
             string connectionString = getConnectionString();
 
             try
             {
                 SqlConnection conn = new SqlConnection(connectionString);
-
-                await Task.Run(() => conn.Open());
+                conn.Open();
+                
                 
             }
             catch(Exception e)
             {
-                database = false;
-            }
-
-            database = true;
-
-            if (database)
-            {
-                return true;
-            }
-            else
-            {
                 return false;
             }
+
+            return true;
         }
 
 

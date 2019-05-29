@@ -24,14 +24,11 @@ namespace PasswordManager.WindowsApp
 
         }
 
-        private async void frmPasswordInsert_Load(object sender, EventArgs e)
+        private void frmPasswordInsert_Load(object sender, EventArgs e)
         {
-            Task<bool> databaseCheckAsync = dl.databaseCheck();
-            //show loading icon
-            bool databaseCheckSuccess = await databaseCheckAsync;
-
-
-            if (databaseCheckSuccess == true)
+            bool databaseCheck = dl.databaseCheck();
+           
+            if (databaseCheck == true)
             {
                 String path = "..\\..\\Resources\\Connected.png";
                 pbStatus.Image = Image.FromFile(path);
@@ -45,7 +42,9 @@ namespace PasswordManager.WindowsApp
                 ttInsert.SetToolTip(pbStatus, "You are not connected!");
                 panel1.Enabled = false;
             }
-            //hide loading icon
+
+            cbCategory.DataSource = dr.getCategories();
+
         }
 
 
