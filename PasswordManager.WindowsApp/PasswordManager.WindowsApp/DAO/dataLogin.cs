@@ -1,18 +1,26 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Dynamic;
 using System.IO;
 using System.Net;
+using System.Runtime.Serialization.Json;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web.Script;
 using System.Web.Script.Serialization;
 
+
 namespace PasswordManager.WindowsApp.DAO
 {
     class dataLogin
     {
+
+        public string loginUrl = "http://74.140.136.128:1337/api/login";
+        public string checkUrl = "http://http://74.140.136.128:1337/product"
+
 
         //this class checks the sql database and returns true if the server is online and false if not  
         public bool databaseCheck()
@@ -43,21 +51,17 @@ namespace PasswordManager.WindowsApp.DAO
         //this class will retrieve database information from txt file
         public string getConnectionString()
         {
-
             string connectionString = "";
 
             try
             {
-
-                //change this file name to point to a different text file with database connection string  
-                string path = "..\\..\\..\\sqlServerConnection.txt";
+               string path = "..\\..\\..\\sqlServerConnection.txt";
 
                 using (StreamReader sr = new StreamReader(path))
                 {
 
                     string stringFromFile = sr.ReadLine();
                     connectionString = stringFromFile;
-
                 }
 
             }//end try
@@ -66,11 +70,8 @@ namespace PasswordManager.WindowsApp.DAO
             {
                 return "File Not Found";
             }//end catch
-
-
+            
             return connectionString;
-
-            //return "";
         }
 
 
@@ -79,17 +80,16 @@ namespace PasswordManager.WindowsApp.DAO
         //connect to database with login
         public bool loginToDatabase(string email, string hashedPassword)
         {
-            string userID;
-            string LoginEmail;
-            string LoginPassword;
 
+            string userID = "";
+            string userEmail = "";
+            string userPassword = "";
+                        
             string json = "{\"email\": \"" + email + "\", \"password\": \"" + hashedPassword + "\"}";
 
-            byte[] jsonArray = Encoding.UTF8.GetBytes(json);
-            int length = jsonArray.Length;
-            
-            string url = "http://74.140.136.128:1337/api/login";
-            Uri uri = new Uri(url);
+            string result;
+
+            Uri uri = new Uri(loginUrl);
             var builder = new UriBuilder(uri);
             builder.Port = 1337;
             uri = builder.Uri;
@@ -99,11 +99,14 @@ namespace PasswordManager.WindowsApp.DAO
             request.Method = "POST";
             request.ContentType = "application/json";
 
+            //write to http
             try
             {
-                using (var stream = request.GetRequestStream())
+                using (var streamWriter = new StreamWriter(request.GetRequestStream()))
                 {
-                    stream.Write(jsonArray, 0, length);
+                    streamWriter.Write(json);
+                    streamWriter.Flush();
+                    streamWriter.Close();
                 }
             }
             catch(Exception e)
@@ -111,71 +114,50 @@ namespace PasswordManager.WindowsApp.DAO
                 return false;
             }
 
+            //get response
+
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            string responseString = new StreamReader(response.GetResponseStream()).ReadToEnd();
-
-            Dictionary<string, string> JSONObject = new JavaScriptSerializer().Deserialize<Dictionary<string, string>>(responseString);
-            userID = JSONObject["UserID"];
-            LoginEmail = JSONObject["UserLoginEmail"];
-            LoginPassword = JSONObject["UserLoginPassword"];
-
-            /*
-            //store userID
-            string userID = "";
-
-            //query to pass to database
-            string queryString = "SELECT [UserID],[UserLoginEmail],[UserLoginPassword] FROM[PasswordManager].[dbo].[tUsers] WHERE UserLoginEmail = @email AND UserLoginPassword = @password";
             
-            //pass values to sql server
-            using (SqlConnection conn = new SqlConnection(getConnectionString()))
+            using (var streamReader = new StreamReader(response.GetResponseStream()))
+            {
+                result = streamReader.ReadToEnd();
+            }
+
+            var serializer = new JavaScriptSerializer();
+            var loginObjects = serializer.Deserialize<List<LoginObject>>(result);
+
+            foreach(var item in loginObjects)
+            {
+                userID = item.UserID;
+                userEmail = item.UserLoginEmail;
+                userPassword = item.UserLoginPassword;
+            }
+
+            if(userEmail == email && userPassword == hashedPassword)
             {
 
-                SqlCommand command = new SqlCommand(queryString, conn);
-                command.Parameters.AddWithValue("@email", email);
-                command.Parameters.AddWithValue("@password", hashedPassword);
-                conn.Open();
-
-                //query database
-                SqlDataReader reader = command.ExecuteReader();
-                try
+                if (userID != "")
                 {
-
-                    //return the userID of the username and password conbination
-                    while (reader.Read())
-                    {
-                        //userID = (String.Format("{0}, {1}", reader["UserID"], reader["UserLoginPassword"]));
-                        userID = (String.Format("{0}", reader["UserID"]));
-
-                    }
-
-                    //if nothing is returned, then there must not be a match and the username / password does not exist
-                    if (userID == "" || userID == null)
-                    {
-                        return false;
-                    }
-
+                    Program.MyStaticValues.userID = int.Parse(userID);
                 }
-
-                //something went wrong
-                catch(Exception e)
+                else
                 {
                     return false;
                 }
-                
+            }
+            else
+            {
+                return false;
             }
 
-            //everything went well
-            //store user ID in global spot
-            //return true   
-            Program.MyStaticValues.userID = int.Parse(userID);
-            */
             return true;
         }
 
 
 
 
-        
+
+
         public int Register(string email, string hashedPassword)
         {
 
@@ -230,6 +212,8 @@ namespace PasswordManager.WindowsApp.DAO
 
             return build.ToString(); ;
         }
+
+
 
 
 
