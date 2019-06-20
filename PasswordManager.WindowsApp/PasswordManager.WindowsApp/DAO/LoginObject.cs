@@ -8,11 +8,12 @@ namespace PasswordManager.WindowsApp.DAO
 {
     public class LoginObject
     {
-        public LoginObject(string userID, string userLoginEmail, string userLoginPassword)
+        public LoginObject(string userID, string userLoginEmail, string userLoginPassword, bool status)
         {
             UserID = userID;
             UserLoginEmail = userLoginEmail;
             UserLoginPassword = userLoginPassword;
+            Status = status;
         }
 
         public LoginObject()
@@ -20,6 +21,7 @@ namespace PasswordManager.WindowsApp.DAO
             UserID = null;
             UserLoginEmail = null;
             UserLoginPassword = null;
+            Status = null;
         }
 
 
@@ -27,6 +29,7 @@ namespace PasswordManager.WindowsApp.DAO
         public string UserID { get; set; }
         public string UserLoginEmail { get; set; }
         public string UserLoginPassword { get; set; }
+        public bool? Status { get; set; }
 
     }
 }

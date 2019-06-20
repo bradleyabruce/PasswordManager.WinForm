@@ -1,16 +1,11 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Dynamic;
 using System.IO;
 using System.Net;
-using System.Runtime.Serialization.Json;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web.Script;
 using System.Web.Script.Serialization;
 
 
@@ -26,17 +21,17 @@ namespace PasswordManager.WindowsApp.DAO
         //this class checks the sql database and returns true if the server is online and false if not  
         public bool databaseCheck()
         {
-           
+
             string connectionString = getConnectionString();
 
             try
             {
                 SqlConnection conn = new SqlConnection(connectionString);
                 conn.Open();
-                
-                
+
+
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return false;
             }
@@ -56,7 +51,7 @@ namespace PasswordManager.WindowsApp.DAO
 
             try
             {
-               string path = "..\\..\\..\\sqlServerConnection.txt";
+                string path = "..\\..\\..\\sqlServerConnection.txt";
 
                 using (StreamReader sr = new StreamReader(path))
                 {
@@ -67,11 +62,11 @@ namespace PasswordManager.WindowsApp.DAO
 
             }//end try
 
-            catch(Exception e)
+            catch (Exception e)
             {
                 return "File Not Found";
             }//end catch
-            
+
             return connectionString;
         }
 
@@ -93,32 +88,40 @@ namespace PasswordManager.WindowsApp.DAO
 
             //validate request
 
-            LoginObject loginObject = await Task.Run(() => ReceiveResponse(request));
+            LoginObject loginObject = await Task.Run(() => ReceiveLoginHttp(request));
 
             //validate response
 
-            userID = loginObject.UserID;
-            userEmail = loginObject.UserLoginEmail;
-            userPassword = loginObject.UserLoginPassword;
-            
-            if(userEmail == email && userPassword == hashedPassword)
+            if (loginObject.Status == false)
+            {
+                return false;
+            }
+            else
             {
 
-                if (userID != "")
+                userID = loginObject.UserID;
+                userEmail = loginObject.UserLoginEmail;
+                userPassword = loginObject.UserLoginPassword;
+
+                if (userEmail == email && userPassword == hashedPassword)
                 {
-                    Program.MyStaticValues.userID = int.Parse(userID);
+
+                    if (userID != "")
+                    {
+                        Program.MyStaticValues.userID = int.Parse(userID);
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
                 else
                 {
                     return false;
                 }
-            }
-            else
-            {
-                return false;
-            }
 
-            return true;
+                return true;
+            }
         }
 
 
@@ -153,7 +156,7 @@ namespace PasswordManager.WindowsApp.DAO
         }
 
 
-        public LoginObject ReceiveResponse(HttpWebRequest request)
+        public LoginObject ReceiveLoginHttp(HttpWebRequest request)
         {
             string result;
 
@@ -164,10 +167,20 @@ namespace PasswordManager.WindowsApp.DAO
                 result = streamReader.ReadToEnd();
             }
 
-            var serializer = new JavaScriptSerializer();
-            var loginObjects = serializer.Deserialize<List<LoginObject>>(result);
+            try
+            {
+                var serializer = new JavaScriptSerializer();
+                var loginObjects = serializer.Deserialize<List<LoginObject>>(result);
 
-            return loginObjects[0];
+                loginObjects[0].Status = true;
+                return loginObjects[0];
+            }
+            catch(Exception Ex)
+            {
+                LoginObject errorObject = new LoginObject();
+                errorObject.Status = false;
+                return errorObject;
+            }
         }
 
 
@@ -203,7 +216,8 @@ namespace PasswordManager.WindowsApp.DAO
 
 
         }
-        
+
+
 
 
 
@@ -219,7 +233,7 @@ namespace PasswordManager.WindowsApp.DAO
             tempHash = new SHA1CryptoServiceProvider().ComputeHash(tempSource);
 
             StringBuilder build = new StringBuilder(tempHash.Length);
-            for (int i = 0; i<tempHash.Length; i++)
+            for (int i = 0; i < tempHash.Length; i++)
             {
                 build.Append(tempHash[i].ToString("X2"));
             }
