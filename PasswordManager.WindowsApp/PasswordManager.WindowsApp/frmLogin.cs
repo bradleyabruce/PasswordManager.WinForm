@@ -9,7 +9,6 @@ namespace PasswordManager.WindowsApp
 {
     public partial class frmLogin : Form
     {
-
         dataLogin dataLogin = new dataLogin();
 
         public frmLogin()

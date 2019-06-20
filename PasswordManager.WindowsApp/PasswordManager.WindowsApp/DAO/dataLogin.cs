@@ -15,16 +15,19 @@ namespace PasswordManager.WindowsApp.DAO
     {
         #region Variables
 
-        public string loginUrl = "http://74.140.136.128:1337/api/login";
-        public string statusUrl = "http://74.140.136.128:1337/api/test";
-        public string signUpUrl = "http://74.140.136.128:1337/api/signUp";
+        public string loginUrl = "https://74.140.136.128:1337/api/login";
+        public string statusUrl = "https://74.140.136.128:1337/api/test";
+        public string signUpUrl = "https://74.140.136.128:1337/api/signUp";
 
         #endregion
 
         #region Status
 
+
         public bool databaseCheck()
         {
+            TrustHttps.IgnoreBadCertificates();
+
             try
             {
                 string result;
