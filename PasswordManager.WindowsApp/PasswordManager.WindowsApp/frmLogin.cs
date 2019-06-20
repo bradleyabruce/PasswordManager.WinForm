@@ -10,8 +10,7 @@ namespace PasswordManager.WindowsApp
     public partial class frmLogin : Form
     {
 
-        dataLogin dl = new dataLogin();
-        int loginHideCounter = 1;
+        dataLogin dataLogin = new dataLogin();
 
         public frmLogin()
         {
@@ -24,7 +23,7 @@ namespace PasswordManager.WindowsApp
         private async void FrmLogin_Load(object sender, EventArgs e)
         {
 
-            bool databaseCheck = dl.databaseCheck();
+            bool databaseCheck = dataLogin.databaseCheck();
 
             if (databaseCheck == true)
             {
@@ -79,9 +78,9 @@ namespace PasswordManager.WindowsApp
                 {
 
                     //hash password
-                    string hashedPass = dl.EncodePassword(password);
+                    string hashedPass = dataLogin.EncodePassword(password);
 
-                    Task<bool> loginAsync = dl.loginToDatabase(username, hashedPass);
+                    Task<bool> loginAsync = dataLogin.loginToDatabase(username, hashedPass);
 
                     //show loading icon...
 
@@ -145,7 +144,7 @@ namespace PasswordManager.WindowsApp
         string registerPassword2 = "";
 
         //when register button is clicked
-        private void BtnRegister_Click(object sender, EventArgs e)
+        private async void BtnRegister_Click(object sender, EventArgs e)
         {
             registerEmail = tbRegisterEmail.Text;
             registerPassword1 = tbRegisterPassword_1.Text;
@@ -175,11 +174,17 @@ namespace PasswordManager.WindowsApp
                     {
 
                         //encrypt password 
-                        string hashedPass = dl.EncodePassword(registerPassword1);
-                        lblRegisterError.Text = hashedPass;
+                        string hashedPass = dataLogin.EncodePassword(registerPassword1);
+
+                        Task<int> SignUpAsync = dataLogin.signUp(registerEmail, hashedPass);
+
+                        //show loading icon...
+
+                        int SignUpSuccess = await SignUpAsync;
+
 
                         //enter into database
-                        if (dl.Register(registerEmail, hashedPass) != 0)
+                        if (SignUpSuccess != -1)
                         {
 
                             //allow user to sign in with new account

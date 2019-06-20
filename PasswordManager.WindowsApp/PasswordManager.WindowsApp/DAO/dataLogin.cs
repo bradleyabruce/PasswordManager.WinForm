@@ -13,23 +13,37 @@ namespace PasswordManager.WindowsApp.DAO
 {
     class dataLogin
     {
+        #region Variables
 
         public string loginUrl = "http://74.140.136.128:1337/api/login";
-        public string checkUrl = "http://http://74.140.136.128:1337/product";
+        public string statusUrl = "http://74.140.136.128:1337/api/test";
+        public string signUpUrl = "http://74.140.136.128:1337/api/signUp";
 
+        #endregion
 
-        //this class checks the sql database and returns true if the server is online and false if not  
+        #region Status
+
         public bool databaseCheck()
         {
-
-            string connectionString = getConnectionString();
-
             try
             {
-                SqlConnection conn = new SqlConnection(connectionString);
-                conn.Open();
+                string result;
+                Uri uri = CreateURI(statusUrl);
 
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+                request.Method = "GET";
 
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+                using (var streamReader = new StreamReader(response.GetResponseStream()))
+                {
+                    result = streamReader.ReadToEnd();
+                }
+
+                if (result != "OK")
+                {
+                    return false;
+                }
             }
             catch (Exception e)
             {
@@ -39,73 +53,63 @@ namespace PasswordManager.WindowsApp.DAO
             return true;
         }
 
-
-
-
-
-
         //this class will retrieve database information from txt file
         public string getConnectionString()
         {
             string connectionString = "";
-
             try
             {
                 string path = "..\\..\\..\\sqlServerConnection.txt";
 
                 using (StreamReader sr = new StreamReader(path))
                 {
-
                     string stringFromFile = sr.ReadLine();
                     connectionString = stringFromFile;
                 }
-
-            }//end try
-
+            }
             catch (Exception e)
             {
                 return "File Not Found";
-            }//end catch
-
+            }
             return connectionString;
         }
 
+        #endregion
 
-
+        #region Login
 
         //connect to database with login
         public async Task<bool> loginToDatabase(string email, string hashedPassword)
         {
-
             string userID = "";
             string userEmail = "";
             string userPassword = "";
-            string result;
 
             string json = "{\"email\": \"" + email + "\", \"password\": \"" + hashedPassword + "\"}";
 
-            HttpWebRequest request = await Task.Run(() => SendLoginHttp(json));
+            HttpWebRequest request = await Task.Run(() => SendHttp(json, loginUrl));
 
-            //validate request
+            //validate
+            if (request == null)
+            {
+                return false;
+            }
 
             LoginObject loginObject = await Task.Run(() => ReceiveLoginHttp(request));
 
-            //validate response
-
+            //validate
             if (loginObject.Status == false)
             {
                 return false;
             }
             else
             {
-
                 userID = loginObject.UserID;
                 userEmail = loginObject.UserLoginEmail;
                 userPassword = loginObject.UserLoginPassword;
 
                 if (userEmail == email && userPassword == hashedPassword)
                 {
-
                     if (userID != "")
                     {
                         Program.MyStaticValues.userID = int.Parse(userID);
@@ -124,15 +128,10 @@ namespace PasswordManager.WindowsApp.DAO
             }
         }
 
-
-
-        public HttpWebRequest SendLoginHttp(string json)
+        public HttpWebRequest SendHttp(string json, string url)
         {
 
-            Uri uri = new Uri(loginUrl);
-            var builder = new UriBuilder(uri);
-            builder.Port = 1337;
-            uri = builder.Uri;
+            Uri uri = CreateURI(url);
 
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
             request.Method = "POST";
@@ -155,7 +154,6 @@ namespace PasswordManager.WindowsApp.DAO
             return request;
         }
 
-
         public LoginObject ReceiveLoginHttp(HttpWebRequest request)
         {
             string result;
@@ -175,7 +173,7 @@ namespace PasswordManager.WindowsApp.DAO
                 loginObjects[0].Status = true;
                 return loginObjects[0];
             }
-            catch(Exception Ex)
+            catch (Exception Ex)
             {
                 LoginObject errorObject = new LoginObject();
                 errorObject.Status = false;
@@ -183,43 +181,68 @@ namespace PasswordManager.WindowsApp.DAO
             }
         }
 
+        #endregion
 
+        #region signUp
 
-        public int Register(string email, string hashedPassword)
+        public async Task<int> signUp(string email, string hashedPassword)
         {
 
-            string query = "INSERT INTO [dbo].[tUsers] (UserLoginEmail, UserLoginPassword) VALUES (@UserLoginEmail, @UserLoginPassword); SELECT SCOPE_IDENTITY()";
+            string json = "{\"email\": \"" + email + "\", \"password\": \"" + hashedPassword + "\"}";
 
-            int returnedID = 0;
+            HttpWebRequest request = await Task.Run(() => SendHttp(json, signUpUrl));
 
-            using (SqlConnection conn = new SqlConnection(getConnectionString()))
+            //validate
+            if (request == null)
             {
-
-                using (SqlCommand command = new SqlCommand(query, conn))
-                {
-
-                    command.Parameters.AddWithValue("@UserLoginEmail", email);
-                    command.Parameters.AddWithValue("@UserLoginPassword", hashedPassword);
-
-                    conn.Open();
-
-                    returnedID = Convert.ToInt32(command.ExecuteScalar());
-
-                    if (conn.State == System.Data.ConnectionState.Open) conn.Close();
-
-                    return returnedID;
-
-                }
+                return -1;
             }
 
+            int UserID = await Task.Run(() => ReceiveSignUpHttp(request));
 
+            //validate
+            if (UserID == -1)
+            {
+                return -1;
+            }
 
+            return UserID;
+        }
 
+        public int ReceiveSignUpHttp(HttpWebRequest request)
+        {
+            string result;
+
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+            using (var streamReader = new StreamReader(response.GetResponseStream()))
+            {
+                result = streamReader.ReadToEnd();
+            }
+
+            try
+            {
+                var serializer = new JavaScriptSerializer();
+                var UserID = serializer.Deserialize<List<String>>(result);
+
+                result = UserID[0];
+            }
+            catch (Exception Ex)
+            {
+                return -1;
+            }
+
+            return int.Parse(result);
         }
 
 
 
 
+
+
+        #endregion
+
+        #region Utilities
 
         public string EncodePassword(string password)
         {
@@ -243,7 +266,16 @@ namespace PasswordManager.WindowsApp.DAO
 
 
 
+        public Uri CreateURI(string url)
+        {
+            Uri uri = new Uri(url);
+            var builder = new UriBuilder(uri);
+            builder.Port = 1337;
+            uri = builder.Uri;
+            return uri;
+        }
 
+        #endregion
 
     }
 }
