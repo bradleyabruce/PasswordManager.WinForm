@@ -15,6 +15,7 @@ namespace PasswordManager.WindowsApp
         dataInsert di = new dataInsert();
         generatePassword gp = new generatePassword();
         DataUtilities dataUtility = new DataUtilities();
+        string userID = Program.MyStaticValues.userID.ToString();
 
         int hideCounter = 1;
 
@@ -44,7 +45,7 @@ namespace PasswordManager.WindowsApp
                 panel1.Enabled = false;
             }
 
-            cbCategory.DataSource = dr.getCategories();
+            cbCategory.DataSource = dr.getCategories(userID);
 
         }
 

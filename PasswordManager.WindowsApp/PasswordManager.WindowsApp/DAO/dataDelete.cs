@@ -9,11 +9,14 @@ namespace PasswordManager.WindowsApp.DAO
 {
     class dataDelete
     {
+        #region Variables
 
         dataLogin dl = new dataLogin();
         DataUtilities dataUtility = new DataUtilities();
 
+        #endregion
 
+        
         public bool deleteEntry(string entryID)
         {
             string domainID = "";

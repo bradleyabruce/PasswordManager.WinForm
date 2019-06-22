@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 
@@ -17,11 +13,12 @@ namespace PasswordManager.WindowsApp.DAO
 
         dataLogin dl = new dataLogin();
         DataUtilities dataUtility = new DataUtilities();
-        string retrieveUrl = "https://74.140.136.128:1337/api/retrieval";
+        string retrieveUrl = "https://74.140.136.128:1337/api/entryRetrieval";
+        string categoryUrl = "https://74.140.136.128:1337/api/categoryRetrieval";
 
         #endregion
 
-        #region GetPasswords              
+        #region GetData           
 
         public async Task<List<PasswordObject>> getEntries(string userID, string categoryid)
         {
@@ -32,17 +29,17 @@ namespace PasswordManager.WindowsApp.DAO
             //validate
             if (request == null)
             {
-                
+
             }
 
-            List<PasswordObject> listOfPasswords = await Task.Run(() => ReceiveSignUpHttp(request));
+            List<PasswordObject> listOfPasswords = await Task.Run(() => ReceiveEntriesHttp(request));
 
             //validate
 
             return listOfPasswords;
         }
-        
-        public List<PasswordObject> ReceiveSignUpHttp(HttpWebRequest request)
+
+        public List<PasswordObject> ReceiveEntriesHttp(HttpWebRequest request)
         {
             List<PasswordObject> listOfPasswords = new List<PasswordObject>();
             string result = "";
@@ -84,90 +81,64 @@ namespace PasswordManager.WindowsApp.DAO
             return listOfPasswords;
         }
 
-        #endregion
-
-        #region Garbage
-
-        //gets all categories and returns them in a list    
-        public List<string> getCategories()
+        public async Task<List<CategoryObject>> getCategories(string userID)
         {
-            //store returned values
-            List<string> catgories = new List<string>();
+            string json = "{\"userid\": \"" + userID + "\"}";
 
-            //query to pass to database
-            string queryString = "SELECT [CategoryName] FROM[PasswordManager].[dbo].[tCategories]";
+            HttpWebRequest request = await Task.Run(() => dataUtility.SendHttp(json, categoryUrl));
 
-            //pass values to sql server
-            using (SqlConnection conn = new SqlConnection(dataUtility.getConnectionString()))
+            //validate
+            if (request == null)
             {
-
-                SqlCommand command = new SqlCommand(queryString, conn);
-                conn.Open();
-
-                //query database
-                SqlDataReader reader = command.ExecuteReader();
-                try
-                {
-
-                    //return the userID of the username and password conbination
-                    while (reader.Read())
-                    {
-                        catgories.Add(String.Format("{0}", reader["CategoryName"]));
-
-                    }
-
-                    //if nothing is returned, then there must not be a match and the username / password does not exist
-                    if (catgories.Count == 0)
-                    {
-
-                    }
-
-                }
-
-                //something went wrong
-                catch (Exception e)
-                {
-
-                }
 
             }
 
-            //everything went well
-            catgories.Insert(0, "None");
-            return catgories;
-        }                                        
-        
-        //get all entries of user logins and passwords
-        public DataSet getEntries(int CategoryID)
+            List<CategoryObject> listOfCategories = await Task.Run(() => ReceiveCategoriesHttp(request));
+
+            //validate
+
+            return listOfCategories;
+        }
+
+        public List<CategoryObject> ReceiveCategoriesHttp(HttpWebRequest request)
         {
+            List<CategoryObject> listOfCategories = new List<CategoryObject>();
+            string result = "";
 
-            var query = "";
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
 
-            //if user is searching for all entries 
-            if (CategoryID == 0)
+            using (var streamReader = new StreamReader(response.GetResponseStream()))
             {
-                query = "SELECT dbo.tWebsiteDomains.WebsiteDomain, dbo.tWebsiteUsername.WebsiteUsername, dbo.tEntries.EntryID FROM dbo.tEntries INNER JOIN dbo.tWebsiteUsername ON dbo.tEntries.WebsiteUsernameID = dbo.tWebsiteUsername.WebsiteUsernameID INNER JOIN dbo.tWebsiteDomains ON dbo.tEntries.WebsiteDomainID = dbo.tWebsiteDomains.WebsiteDomainID INNER JOIN dbo.tUsers ON dbo.tEntries.UserID = dbo.tUsers.UserID WHERE(dbo.tUsers.UserID = " + Program.MyStaticValues.userID + ")";
+                result = streamReader.ReadToEnd();
             }
-            //if user is searching for specific category
+
+            if (result == @"""No Results""")
+            {
+
+            }
+
             else
             {
-               query = "SELECT dbo.tWebsiteDomains.WebsiteDomain, dbo.tWebsiteUsername.WebsiteUsername, dbo.tEntries.EntryID FROM dbo.tEntries INNER JOIN dbo.tWebsiteUsername ON dbo.tEntries.WebsiteUsernameID = dbo.tWebsiteUsername.WebsiteUsernameID INNER JOIN dbo.tWebsiteDomains ON dbo.tEntries.WebsiteDomainID = dbo.tWebsiteDomains.WebsiteDomainID INNER JOIN dbo.tUsers ON dbo.tEntries.UserID = dbo.tUsers.UserID WHERE(dbo.tUsers.UserID = " + Program.MyStaticValues.userID + ") AND(dbo.tEntries.CategoryID =" + CategoryID + ")";
+                try
+                {
+                    var serializer = new JavaScriptSerializer();
+                    listOfCategories = serializer.Deserialize<List<CategoryObject>>(result);
+                }
+
+                catch (Exception Ex)
+                {
+                    listOfCategories.Clear();
+                    //PasswordObject failureObject = new PasswordObject();
+                    //failureObject.Status = "Issue";
+                   // listOfCategories.Add(failureObject);
+                    return listOfCategories;
+                }
             }
-            
-           
-            var dataAdapter = new SqlDataAdapter(query, dataUtility.getConnectionString());
-
-            var commandBuilder = new SqlCommandBuilder(dataAdapter);
-            var ds = new DataSet();
-            dataAdapter.Fill(ds);
-
-            //everything went well
-            return ds;
-
-            
+            return listOfCategories;
         }
-                
+
         #endregion
+
     }
 }
 
