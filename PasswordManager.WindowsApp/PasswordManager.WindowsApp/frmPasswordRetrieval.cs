@@ -2,14 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Data.SqlClient;
 using System.Drawing;
-using System.IO;
 using System.Linq;
-using System.Net.Mail;
-using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -49,7 +43,9 @@ namespace PasswordManager.WindowsApp
             if (entries[0].Status == "No Results")
             {
                 pnlResults.Enabled = false;
-                MessageBox.Show("No Results");
+                lblNoResults.Text = "No Results";
+                lblNoResults.Visible = true;
+                lblNoResults.ForeColor = Color.Red;
             }
 
             //if there are results
@@ -59,12 +55,18 @@ namespace PasswordManager.WindowsApp
                 {
                     comboCategorySort.Enabled = false;
                     pnlResults.Enabled = false;
-                    MessageBox.Show("Unable to retrieve results");
+                    lblNoResults.Text = "Unable to Retrieve Entries";
+                    lblNoResults.Visible = true;
+                    lblNoResults.ForeColor = Color.Red;
                 }
 
                 //if there are no failures
                 else
                 {
+                    pnlResults.Enabled = true;
+                    comboCategorySort.Enabled = true;
+                    lblNoResults.Visible = false;
+
                     dataGridEntries.Columns.Add("EntryID", "EntryID");
                     dataGridEntries.Columns.Add("Website", "Website");
                     dataGridEntries.Columns.Add("Username", "Username");
@@ -96,10 +98,11 @@ namespace PasswordManager.WindowsApp
 
                     DataGridIndex = 0;
                 }
-                //hiding loading icon
-                pnlList.Enabled = true;
-                progressBar.Visible = false;
             }
+
+            //hiding loading icon
+            pnlList.Enabled = true;
+            progressBar.Visible = false;
         }
 
         public bool RefreshResultsPanel()
@@ -115,6 +118,9 @@ namespace PasswordManager.WindowsApp
                 tbResultPassword.Text = currentPassword;
                 tbResultUsername.Text = currentUsername;
                 comboCategoryResult.SelectedIndex = int.Parse(currentCategoryID);
+
+                btnUpdate.Enabled = false;
+                btnCancel.Enabled = false;
                 return true;
             }
             catch (Exception e)
@@ -182,7 +188,6 @@ namespace PasswordManager.WindowsApp
             }
         }
 
-        //when the copy button is click, copy result to clipboard
         private void BtnCopyPassword_Click(object sender, EventArgs e)
         {
             if (tbResultPassword.Text == "" || tbResultPassword.Text == null)
@@ -207,7 +212,6 @@ namespace PasswordManager.WindowsApp
             this.Close();
         }
 
-        //when the delete button is pressed
         private void BtnDelete_Click(object sender, EventArgs e)
         {
             //get selected data
@@ -228,7 +232,7 @@ namespace PasswordManager.WindowsApp
             RefreshResultsPanel();
         }
 
-        //when the update button is pressed
+        //needs modification
         private void BtnUpdate_Click(object sender, EventArgs e)
         {
             //get values of current entry from database
@@ -329,7 +333,6 @@ namespace PasswordManager.WindowsApp
             userTextChange = true;
         }
 
-        //when user makes changes to text boxes text and combo box selection
         private void TbResult_TextChanged(object sender, EventArgs e)
         {
             TextBox currentTextBox = (TextBox)sender as TextBox;
@@ -383,7 +386,6 @@ namespace PasswordManager.WindowsApp
             }
         }
 
-        //let user know that changes have not been saved yet
         private void ComboCategoryResult_SelectedIndexChanged(object sender, EventArgs e)
         {
             DataGridViewRow currentRow = dataGridEntries.SelectedRows[0];
@@ -416,7 +418,6 @@ namespace PasswordManager.WindowsApp
             }
         }
 
-        //generate new random password for user
         private void btnGeneratePassword_Click(object sender, EventArgs e)
         {
             tbResultPassword.Text = gp.GenerateToken(50) + "-" + gp.GenerateToken(50) + "-" + gp.GenerateToken(50);
@@ -445,72 +446,26 @@ namespace PasswordManager.WindowsApp
 
         private void BtnCancel_Click(object sender, EventArgs e)
         {
+            DataGridViewRow currentRow = dataGridEntries.SelectedRows[0];
+            string currentUserName = currentRow.Cells[2].Value.ToString();
+            string currentPassword = currentRow.Cells[3].Value.ToString();
+            string currentCategoryID = currentRow.Cells[4].Value.ToString();
 
-            //get website and WebsiteUsernameID
-            string websiteDomain = "";
-            string websiteUsername = "";
-            string entryID = "";
+            tbResultUsername.Text = currentUserName;
+            tbResultPassword.Text = currentPassword;
+            comboCategoryResult.SelectedIndex = int.Parse(currentCategoryID);
 
-            List<string> cellValues = new List<string>();
-
-            //loop through all selected rows
-            for (int i = 0; i < dataGridEntries.SelectedRows.Count; i++)
-            {
-
-                for (int j = 0; j < dataGridEntries.SelectedRows[i].Cells.Count; j++)
-                {
-                    cellValues.Add(dataGridEntries.SelectedRows[i].Cells[j].Value.ToString());
-                }
-
-            }
-
-            websiteDomain = cellValues[0];
-            websiteUsername = cellValues[1];
-            entryID = cellValues[2];
-
-            //pass those values to retrieve username and password
-            string userID = Program.MyStaticValues.userID.ToString();
-
-            //set username and password text boxes
-            tbResultPassword.Text = dataRetrieval.getWebsitePassword(entryID);
-            tbResultUsername.Text = websiteUsername;
-            comboCategoryResult.SelectedIndex = dataRetrieval.getEntryCategory(entryID);
-
-            pbUsernameSave.Visible = false;
-            pbPasswordSave.Visible = false;
-            pbCategorySave.Visible = false;
             btnCancel.Enabled = false;
             btnUpdate.Enabled = false;
         }
 
-        //when favorite button is clicked
         private void BtnFavorite_Click(object sender, EventArgs e)
         {
-            /*
-            //increase hide counter every time the button is pressed
-            favoriteCounter++;
-
-            if (favoriteCounter % 2 == 0)
-            {
-                //set image
-                String path = "..\\..\\Resources\\starFilled.png";
-                btnFavorite.Image = Image.FromFile(path);
-            }
-            else
-            {
-                //set image
-                String path = "..\\..\\Resources\\star.png";
-                btnFavorite.Image = Image.FromFile(path);
-            }
-
             MessageBox.Show("Coming Soon");
-            */
         }
 
-        //launch settings pane
         private void BtnSettings_Click(object sender, EventArgs e)
         {
-
             //create new form to open
             frmSettings newForm = new frmSettings();
             newForm.Show();
@@ -518,7 +473,6 @@ namespace PasswordManager.WindowsApp
 
             //close login form
             this.Close();
-
         }
 
         #endregion

@@ -9,20 +9,26 @@ namespace PasswordManager.WindowsApp
 {
     public partial class frmLogin : Form
     {
+        #region Variables
+
         dataLogin dataLogin = new dataLogin();
         DataUtilities dataUtility = new DataUtilities();
+        
+        string registerEmail = "";
+        string registerPassword1 = "";
+        string registerPassword2 = "";
+
+        #endregion
+
+        #region Constructors
 
         public frmLogin()
         {
             InitializeComponent();
         }
-
-
-        //on start up of the application
-        //set database status
-        private async void FrmLogin_Load(object sender, EventArgs e)
+        
+        private void FrmLogin_Load(object sender, EventArgs e)
         {
-
             bool databaseCheck = dataUtility.databaseCheck();
 
             if (databaseCheck == true)
@@ -30,8 +36,8 @@ namespace PasswordManager.WindowsApp
                 String path = "..\\..\\Resources\\Connected.png";
                 pbStatus.Image = Image.FromFile(path);
                 ttLogin.SetToolTip(pbStatus, "You are connected!");
-
             }
+
             else
             {
                 String path = "..\\..\\Resources\\notConnected.png";
@@ -40,32 +46,28 @@ namespace PasswordManager.WindowsApp
                 btnLogin.Enabled = false;
             }
 
+            tbLoginEmail.Focus();
         }
 
-/********************** Login *****************************/
-  
-        //on login button press
+        #endregion
+
+        #region Events
+
         private async void BtnLogin_Click(object sender, EventArgs e)
         {
-
-            //get username and password from textbox
             string username = tbLoginEmail.Text;
             string password = tbLoginPassword.Text;
 
-            //check to see if username is blank
             if (username == "")
             {
                 lblLoginError.ForeColor = System.Drawing.Color.Red;
                 lblLoginError.Text = "Email is required";
                 tbRegisterEmail.Focus();
                 tbRegisterEmail.SelectAll();
-
             }
 
             else
             {
-
-                //if passsword is blank, let the user know
                 if (password == "")
                 {
                     lblLoginError.ForeColor = System.Drawing.Color.Red;
@@ -76,21 +78,17 @@ namespace PasswordManager.WindowsApp
 
                 else
                 {
-
-                    //hash password
                     string hashedPass = dataUtility.EncodePassword(password);
 
                     Task<bool> loginAsync = dataLogin.loginToDatabase(username, hashedPass);
 
-                    //show loading icon...
+                    progressBarLogin.Visible = true;
+                    progressBarLogin.MarqueeAnimationSpeed = 10;
 
                     bool loginSuccess = await loginAsync;
-                    
-                    
+                                        
                     if (loginSuccess)
                     {
-              
-                        //create new form to open
                         frmPasswordRetrieval newForm = new frmPasswordRetrieval();
                         newForm.Show();
                         newForm.Location = this.Location;
@@ -99,7 +97,6 @@ namespace PasswordManager.WindowsApp
                         this.Close();
                     }
 
-                    //if the login returns false alert the user 
                     else
                     {
                         lblLoginError.ForeColor = System.Drawing.Color.Red;
@@ -107,18 +104,12 @@ namespace PasswordManager.WindowsApp
 
                         tbLoginPassword.Focus();
                         tbLoginPassword.SelectAll();
-
                     }
-                    
-                    //hide loading bar...
 
-                }//end password blank   
-
-            }//end username blank
-
-        }//end button click
-
-
+                    progressBarLogin.Visible = false;
+                } 
+            }
+        }
 
         private void BtnShowLoginPassword_MouseDown(object sender, EventArgs e)
         {
@@ -127,8 +118,6 @@ namespace PasswordManager.WindowsApp
                 btnShowLoginPassword.Image = Image.FromFile(path);            
         }
 
-
-
         private void BtnShowLoginPassword_MouseUp(object sender, EventArgs e)
         {
             tbLoginPassword.PasswordChar = '*';
@@ -136,21 +125,12 @@ namespace PasswordManager.WindowsApp
             btnShowLoginPassword.Image = Image.FromFile(path);
         }
 
-
-        /************************ Registation *******************************/
-
-        string registerEmail = "";
-        string registerPassword1 = "";
-        string registerPassword2 = "";
-
-        //when register button is clicked
         private async void BtnRegister_Click(object sender, EventArgs e)
         {
             registerEmail = tbRegisterEmail.Text;
             registerPassword1 = tbRegisterPassword_1.Text;
             registerPassword2 = tbRegisterPassword_2.Text;
 
-            //check blanks
             if (registerEmail == "")
             {
                 lblRegisterError.ForeColor = System.Drawing.Color.Red;
@@ -172,22 +152,17 @@ namespace PasswordManager.WindowsApp
                     }
                     else
                     {
-
-                        //encrypt password 
                         string hashedPass = dataUtility.EncodePassword(registerPassword1);
 
                         Task<int> SignUpAsync = dataLogin.signUp(registerEmail, hashedPass);
 
-                        //show loading icon...
+                        progressBarLogin.Visible = true;
+                        progressBarLogin.MarqueeAnimationSpeed = 10;
 
                         int SignUpSuccess = await SignUpAsync;
-
-
-                        //enter into database
+                        
                         if (SignUpSuccess != -1)
                         {
-
-                            //allow user to sign in with new account
                             tabControlLogin.SelectedIndex = 0;
                             lblLoginError.ForeColor = System.Drawing.Color.Green;
                             lblLoginError.Text = "Registration Success!";
@@ -197,17 +172,24 @@ namespace PasswordManager.WindowsApp
                             tbRegisterPassword_1.Text = "";
                             tbRegisterPassword_2.Text = "";
                             lblRegisterError.Text = "";
-
                         }
-
+                        else
+                        {
+                            tabControlLogin.SelectedIndex = 0;
+                            lblLoginError.ForeColor = System.Drawing.Color.Red;
+                            lblLoginError.Text = "Registration Failed!";
+                            tbLoginEmail.Text = "";
+                            tbLoginPassword.Text = "";
+                            tbRegisterEmail.Text = "";
+                            tbRegisterPassword_1.Text = "";
+                            tbRegisterPassword_2.Text = "";
+                            lblRegisterError.Text = "";
+                        }
                     }
                 }
             }
-
-
+            progressBarLogin.Visible = false;
         }
-
-
 
         private void btnRegisterPassword1Show_MouseDown(object sender, EventArgs e)
         {
@@ -223,8 +205,6 @@ namespace PasswordManager.WindowsApp
             btnRegisterPassword1Show.Image = Image.FromFile(path);
         }
 
-
-
         private void btnRegisterPassword2Show_MouseDown(object sender, EventArgs e)
         {
             tbRegisterPassword_2.PasswordChar = '\0';
@@ -239,11 +219,6 @@ namespace PasswordManager.WindowsApp
             btnRegisterPassword2Show.Image = Image.FromFile(path);
         }
 
-        private void Button1_Click(object sender, EventArgs e)
-        {
-            dataRetrieval dr = new dataRetrieval();
-            dr.getEntries("7", "0");
-        }
-    }//end form
-
-}//end namespace
+        #endregion
+    }
+}

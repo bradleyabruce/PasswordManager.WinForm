@@ -135,11 +135,8 @@ namespace PasswordManager.WindowsApp.DAO
             //everything went well
             catgories.Insert(0, "None");
             return catgories;
-        }
-
-                                    
-
-
+        }                                        
+        
         //get all entries of user logins and passwords
         public DataSet getEntries(int CategoryID)
         {
@@ -169,115 +166,7 @@ namespace PasswordManager.WindowsApp.DAO
 
             
         }
-
-
-
-
-        public string getWebsitePassword(string entryID)
-        {
-
-            string websitePassword = "";
-
-            //query to pass to database
-            string queryString = "SELECT dbo.tWebsitePasswords.WebsitePassword, dbo.tEntries.EntryID FROM dbo.tEntries INNER JOIN dbo.tWebsitePasswords ON dbo.tEntries.WebsitePasswordID = dbo.tWebsitePasswords.WebsitePasswordID WHERE(dbo.tEntries.EntryID =" + entryID + ")";
-
-            //pass values to sql server
-            using (SqlConnection conn = new SqlConnection(dataUtility.getConnectionString()))
-            {
-
-                SqlCommand command = new SqlCommand(queryString, conn);
-                conn.Open();
-
-                //query database
-                SqlDataReader reader = command.ExecuteReader();
-                try
-                {
-
-                    //return the userID of the username and password conbination
-                    while (reader.Read())
-                    {
-                        websitePassword = String.Format("{0}", reader["WebsitePassword"]);
-
-                    }
-
-                    //if nothing is returned, then there must not be a match and the username / password does not exist
-                    if (websitePassword == "")
-                    {
-
-                    }
-
-                }
-
-                //something went wrong
-                catch (Exception e)
-                {
-
-                }
-
-            }
-
-            //everything went well
-            return websitePassword;
-
-
-        }
-
-
-
-        public int getEntryCategory(string entryID)
-        {
-
-            string stringCategoryID = "";
-            int CategoryID = 0;
-
-            //query to pass to database
-            string queryString = "SELECT CategoryID FROM dbo.tEntries WHERE(EntryID =" + entryID + ")";
-
-            //pass values to sql server
-            using (SqlConnection conn = new SqlConnection(dataUtility.getConnectionString()))
-            {
-
-                SqlCommand command = new SqlCommand(queryString, conn);
-                conn.Open();
-
-                //query database
-                SqlDataReader reader = command.ExecuteReader();
-                try
-                {
-
-                    //return the userID of the username and password conbination
-                    while (reader.Read())
-                    {
-                        stringCategoryID = String.Format("{0}", reader["CategoryID"]);
-                        CategoryID = int.Parse(stringCategoryID);
-
-                    }
-
-                    //if nothing is returned, then there must not be a match and the username / password does not exist
-                    if (stringCategoryID == "")
-                    {
-
-                    }
-
-                }
-
-                //something went wrong
-                catch (Exception e)
-                {
-
-                }
-
-            }
-
-            //everything went well
-            return CategoryID;
-
-
-
-
-
-        }
-
+                
         #endregion
     }
 }

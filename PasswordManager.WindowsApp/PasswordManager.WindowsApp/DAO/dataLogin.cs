@@ -132,6 +132,7 @@ namespace PasswordManager.WindowsApp.DAO
         public int ReceiveSignUpHttp(HttpWebRequest request)
         {
             string result;
+            List<string> returnedList = new List<string>();
 
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
 
@@ -142,17 +143,19 @@ namespace PasswordManager.WindowsApp.DAO
 
             try
             {
-                var serializer = new JavaScriptSerializer();
-                var UserID = serializer.Deserialize<List<String>>(result);
-
-                result = UserID[0];
+               if(result == "Email and password Required")
+               {
+                   return -1;
+               }
+               else
+               {
+                    return 1;
+               }
             }
             catch (Exception Ex)
             {
                 return -1;
             }
-
-            return int.Parse(result);
         }
 
 
