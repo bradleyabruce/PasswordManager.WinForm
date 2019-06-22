@@ -11,15 +11,16 @@ namespace PasswordManager.WindowsApp.DAO
     {
 
         dataLogin dl = new dataLogin();
+        DataUtilities dataUtility = new DataUtilities();
 
 
-        
+
         public int insertWebsiteDomain(string domain) {
 
             string query = "INSERT INTO [dbo].[tWebsiteDomains] (WebsiteDomain) VALUES (@WebsiteDomain); SELECT SCOPE_IDENTITY()";
             int returnedID = 0;
 
-            using (SqlConnection conn = new SqlConnection(dl.getConnectionString()))
+            using (SqlConnection conn = new SqlConnection(dataUtility.getConnectionString()))
             {
 
 
@@ -51,7 +52,7 @@ namespace PasswordManager.WindowsApp.DAO
             string query = "INSERT INTO [dbo].[tWebsiteUsername] (WebsiteUsername) VALUES (@WebsiteUsername); SELECT SCOPE_IDENTITY()";
             int returnedID = 0;
 
-            using (SqlConnection conn = new SqlConnection(dl.getConnectionString()))
+            using (SqlConnection conn = new SqlConnection(dataUtility.getConnectionString()))
             {
 
 
@@ -83,7 +84,7 @@ namespace PasswordManager.WindowsApp.DAO
             string query = "INSERT INTO [dbo].[tWebsitePasswords] (WebsitePassword) VALUES (@WebsitePassword); SELECT SCOPE_IDENTITY()";
             int returnedID = 0;
 
-            using (SqlConnection conn = new SqlConnection(dl.getConnectionString()))
+            using (SqlConnection conn = new SqlConnection(dataUtility.getConnectionString()))
             {
 
 
@@ -116,7 +117,7 @@ namespace PasswordManager.WindowsApp.DAO
 
             int returnedID = 0;
 
-            using (SqlConnection conn = new SqlConnection(dl.getConnectionString()))
+            using (SqlConnection conn = new SqlConnection(dataUtility.getConnectionString()))
             {
 
 

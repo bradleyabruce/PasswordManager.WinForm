@@ -11,6 +11,7 @@ namespace PasswordManager.WindowsApp.DAO
     {
 
         dataLogin dl = new dataLogin();
+        DataUtilities dataUtility = new DataUtilities();
 
 
         //get values from entry to find changes
@@ -24,7 +25,7 @@ namespace PasswordManager.WindowsApp.DAO
             string queryString = "SELECT dbo.tWebsitePasswords.WebsitePassword, dbo.tWebsiteUsername.WebsiteUsername, dbo.tWebsitePasswords.WebsitePasswordID, dbo.tWebsiteUsername.WebsiteUsernameID, dbo.tEntries.CategoryID FROM dbo.tEntries INNER JOIN dbo.tWebsiteDomains ON dbo.tEntries.WebsiteDomainID = dbo.tWebsiteDomains.WebsiteDomainID INNER JOIN dbo.tWebsitePasswords ON dbo.tEntries.WebsitePasswordID = dbo.tWebsitePasswords.WebsitePasswordID INNER JOIN dbo.tWebsiteUsername ON dbo.tEntries.WebsiteUsernameID = dbo.tWebsiteUsername.WebsiteUsernameID WHERE(dbo.tEntries.EntryID = " + entryID + ")";
 
             //pass values to sql server
-            using (SqlConnection conn = new SqlConnection(dl.getConnectionString()))
+            using (SqlConnection conn = new SqlConnection(dataUtility.getConnectionString()))
             {
 
                 SqlCommand command = new SqlCommand(queryString, conn);
@@ -81,7 +82,7 @@ namespace PasswordManager.WindowsApp.DAO
 
             string query = "UPDATE dbo.tWebsitePasswords SET WebsitePassword = @newPassword WHERE WebsitePasswordID = @passwordID";
 
-            using (SqlConnection conn = new SqlConnection(dl.getConnectionString()))
+            using (SqlConnection conn = new SqlConnection(dataUtility.getConnectionString()))
             {
 
                 using (SqlCommand command = new SqlCommand(query, conn))
@@ -110,7 +111,7 @@ namespace PasswordManager.WindowsApp.DAO
 
             string query = "UPDATE dbo.tWebsiteUsername SET WebsiteUsername = @newUsername WHERE WebsiteUsernameID = @usernameID";
 
-            using (SqlConnection conn = new SqlConnection(dl.getConnectionString()))
+            using (SqlConnection conn = new SqlConnection(dataUtility.getConnectionString()))
             {
 
                 using (SqlCommand command = new SqlCommand(query, conn))
@@ -137,7 +138,7 @@ namespace PasswordManager.WindowsApp.DAO
 
             string query = "UPDATE dbo.tEntries SET CategoryID = @newCategoryID WHERE EntryID = @entryID";
 
-            using (SqlConnection conn = new SqlConnection(dl.getConnectionString()))
+            using (SqlConnection conn = new SqlConnection(dataUtility.getConnectionString()))
             {
 
                 using (SqlCommand command = new SqlCommand(query, conn))

@@ -11,6 +11,7 @@ namespace PasswordManager.WindowsApp.DAO
     {
 
         dataLogin dl = new dataLogin();
+        DataUtilities dataUtility = new DataUtilities();
 
 
 
@@ -24,7 +25,7 @@ namespace PasswordManager.WindowsApp.DAO
             string queryString = "SELECT UserLoginEmail FROM dbo.tUsers WHERE(UserID =" + userID + ");";
 
             //pass values to sql server
-            using (SqlConnection conn = new SqlConnection(dl.getConnectionString()))
+            using (SqlConnection conn = new SqlConnection(dataUtility.getConnectionString()))
             {
 
                 SqlCommand command = new SqlCommand(queryString, conn);
@@ -75,7 +76,7 @@ namespace PasswordManager.WindowsApp.DAO
             string queryString = "SELECT dbo.tEntries.EntryID FROM dbo.tEntries INNER JOIN dbo.tUsers ON dbo.tEntries.UserID = dbo.tUsers.UserID WHERE(dbo.tUsers.UserID =" + userID + ")";
 
             //pass values to sql server
-            using (SqlConnection conn = new SqlConnection(dl.getConnectionString()))
+            using (SqlConnection conn = new SqlConnection(dataUtility.getConnectionString()))
             {
 
                 SqlCommand command = new SqlCommand(queryString, conn);

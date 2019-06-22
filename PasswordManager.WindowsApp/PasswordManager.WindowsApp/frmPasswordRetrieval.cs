@@ -17,20 +17,92 @@ namespace PasswordManager.WindowsApp
 {
     public partial class frmPasswordRetrieval : Form
     {
+        #region Variables
 
-        dataLogin dl = new dataLogin();
-        dataRetrieval dr = new dataRetrieval();
+        string userID = Program.MyStaticValues.userID.ToString();
+        dataRetrieval dataRetrieval = new dataRetrieval();
         dataDelete dd = new dataDelete();
         dataUpdate du = new dataUpdate();
         generatePassword gp = new generatePassword();
-
         int hideCounter = 1;
         int favoriteCounter = 1;
-        bool comboCategoryChange = false;
 
         //this variable will determine whether the user is making a selection, or text is changing programatically
         bool userTextChange = true;
 
+        #endregion
+
+        #region Methods
+
+        public async void RefreshDataGrid(string userID, string categoryID)
+        {
+            Task<List<PasswordObject>> entriesAsync = dataRetrieval.getEntries(userID, categoryID);
+
+            //show loading icon...
+
+            List<PasswordObject> entries = await entriesAsync;
+
+            if (entries[0].Status == "No Results")
+            {
+                pnlResults.Enabled = false;
+                MessageBox.Show("No Results");
+            }
+
+            //if there are results
+            else
+            {
+                if (entries[0].Status == "Failure")
+                {
+                    comboCategorySort.Enabled = false;
+                    pnlResults.Enabled = false;
+                    MessageBox.Show("Unable to retrieve results");
+                }
+
+                //if there are no failures
+                else
+                {
+                    dataGridEntries.Columns.Add("EntryID", "EntryID");
+                    dataGridEntries.Columns.Add("Website", "Website");
+                    dataGridEntries.Columns.Add("Username", "Username");
+                    dataGridEntries.Columns.Add("Password", "Password");
+                    dataGridEntries.Columns.Add("CategoryID", "CategoryID");
+                    dataGridEntries.Columns[0].Visible = false;
+                    dataGridEntries.Columns[3].Visible = false;
+                    dataGridEntries.Columns[4].Visible = false;
+
+                    foreach (PasswordObject passwordObject in entries)
+                    {
+                        string[] rows = new string[] { passwordObject.EntryID, passwordObject.WebsiteDomain, passwordObject.WebsiteUsername, passwordObject.WebsitePassword, passwordObject.CategoryID };
+                        dataGridEntries.Rows.Add(rows);
+                    }
+                }
+            }
+        }
+
+        public bool RefreshResultsPanel()
+        {
+            try
+            {
+                DataGridViewRow currentRow = dataGridEntries.SelectedRows[0];
+                comboCategoryResult.DataSource = dataRetrieval.getCategories();
+
+                string currentUsername = currentRow.Cells[2].Value.ToString();
+                string currentPassword = currentRow.Cells[3].Value.ToString();
+                string currentCategoryID = currentRow.Cells[4].Value.ToString();
+                tbResultPassword.Text = currentPassword;
+                tbResultUsername.Text = currentUsername;
+                comboCategoryResult.SelectedIndex = int.Parse(currentCategoryID);
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+
+        #endregion
+
+        #region Constructors
 
         //when the form is loaded, check status and load categories and entries
         public frmPasswordRetrieval()
@@ -38,160 +110,42 @@ namespace PasswordManager.WindowsApp
             InitializeComponent();
         }
 
-
-
-
-        private void FrmPasswordRetrieval_Load(object sender, EventArgs e)
+        private async void FrmPasswordRetrieval_Load(object sender, EventArgs e)
         {
-
             userTextChange = false;
 
-            //set datagrid for all values
-            dataGridEntries.DataSource = dr.getEntries(0).Tables[0]; 
-            dataGridEntries.Refresh();
-
-            //hide ID column
-            dataGridEntries.Columns[2].Visible = false;
-            dataGridEntries.EnableHeadersVisualStyles = false;
-
             //load categories
-            comboCategorySort.DataSource = dr.getCategories();
+            comboCategorySort.DataSource = dataRetrieval.getCategories();
 
+            RefreshDataGrid(userID, comboCategorySort.SelectedIndex.ToString());
 
-            //if there are no results, disable user options until they add more
-
-            if (dataGridEntries.Rows.Count == 0)
-            {
-                pnlResults.Enabled = false;
-            }
-            else
-            {
-                //load result categories
-                comboCategoryResult.DataSource = dr.getCategories();
-                List<string> reloadValues = new List<string>();
-
-                for (int j = 0; j < dataGridEntries.Rows[0].Cells.Count; j++)
-                {
-                    reloadValues.Add(dataGridEntries.SelectedRows[0].Cells[j].Value.ToString());
-                }
-
-                string entryID = reloadValues[2];
-                string websiteUsername = reloadValues[1];
-
-                tbResultPassword.Text = dr.getWebsitePassword(entryID);
-                tbResultUsername.Text = websiteUsername;
-                comboCategoryResult.SelectedIndex = dr.getEntryCategory(entryID);
-
-            }
+            RefreshResultsPanel();
 
             userTextChange = true;
-
         }
 
+        #endregion
+
+        #region Events
 
 
-
-        //when sort combo box is selected, query the database with that selected option
         public void ComboCategorySort_SelectedIndexChanged(object sender, EventArgs e)
         {
+            dataGridEntries.Rows.Clear();
+            dataGridEntries.Columns.Clear();
 
-            //on first combo select (on page load) do nothing
-            if (comboCategoryChange == false)
-            {
-                //do nothing
-            }
-            else
-            {
-                //get ID of option selected and reload list from ID
-                int index = comboCategorySort.SelectedIndex;
+            //get ID of option selected and reload list from ID
+            string index = comboCategorySort.SelectedIndex.ToString();
 
-                //load data based on selection of category
-                dataGridEntries.DataSource = dr.getEntries(index).Tables[0];
-                dataGridEntries.Refresh();
-
-            }
-            comboCategoryChange = true;
+            RefreshDataGrid(userID, index);
+            RefreshResultsPanel();
         }
 
-
-
-
-
-
-        //update results when the user selects an entry
         private void DataGridEntries_SelectionChanged(object sender, EventArgs e)
         {
-
-            if (userTextChange == false)
-            {
-                //do nothing if the program changes selection
-            }
-
-            //if the user makes a selection..
-            else
-            {
-                //get website and WebsiteUsernameID
-                string websiteDomain = "";
-                string websiteUsername = "";
-                string entryID = "";
-
-                List<string> cellValues = new List<string>();
-
-
-                //if there are no selected row (in the case of a delete event), reload the first entry
-                if (dataGridEntries.SelectedRows.Count == 0)
-                {
-                    //do nothing as the selected row changed event will fire again when the new row is selected after the delete
-                }
-                //if there are selected rows, display data from that row
-                else
-                {
-
-                    for (int i = 0; i < dataGridEntries.SelectedRows.Count; i++)
-                    {
-
-                        for (int j = 0; j < dataGridEntries.SelectedRows[i].Cells.Count; j++)
-                        {
-                            cellValues.Add(dataGridEntries.SelectedRows[i].Cells[j].Value.ToString());
-                        }
-
-                    }
-
-                    websiteDomain = cellValues[0];
-                    websiteUsername = cellValues[1];
-                    entryID = cellValues[2];
-
-                    //pass those values to retrieve username and password
-                    string userID = Program.MyStaticValues.userID.ToString();
-
-                    //set username and password text boxes
-                    tbResultPassword.Text = dr.getWebsitePassword(entryID);
-                    tbResultUsername.Text = websiteUsername;
-
-                    //set current category combo box
-                    comboCategoryResult.DataSource = dr.getCategories();
-                    comboCategoryResult.SelectedIndex = dr.getEntryCategory(entryID);
-
-                }
-                
-                //clean up of UI
-                pbUsernameSave.Visible = false;
-                pbPasswordSave.Visible = false;
-                pbCategorySave.Visible = false;
-
-                userTextChange = true;
-                btnCancel.Enabled = false;
-                btnUpdate.Enabled = false;
-            }
+            RefreshResultsPanel();
         }
-
-
-    
-
-
-
-
-        //when the copy button is click, copy result to clipboard
+                                 
         private void BtnCopyEmail_Click(object sender, EventArgs e)
         {
             if (tbResultUsername.Text == "" || tbResultUsername.Text == null)
@@ -203,10 +157,7 @@ namespace PasswordManager.WindowsApp
                 Clipboard.SetText(tbResultUsername.Text);
             }
         }
-
-
-
-
+                     
         //when the copy button is click, copy result to clipboard
         private void BtnCopyPassword_Click(object sender, EventArgs e)
         {
@@ -220,14 +171,9 @@ namespace PasswordManager.WindowsApp
             }
 
         }
-
-
-
-
-        //when add button is pressed, open the add form
+                          
         private void BtnAdd_Click(object sender, EventArgs e)
         {
-
             //create new form to open
             frmPasswordInsert newForm = new frmPasswordInsert();
             newForm.Show();
@@ -236,10 +182,7 @@ namespace PasswordManager.WindowsApp
             //close login form
             this.Close();
         }
-
-
-
-
+                     
         //when the delete button is pressed
         private void BtnDelete_Click(object sender, EventArgs e)
         {
@@ -268,9 +211,9 @@ namespace PasswordManager.WindowsApp
 
             //reload list
             int index = comboCategorySort.SelectedIndex;
-            dataGridEntries.DataSource = dr.getEntries(index).Tables[0];
+            dataGridEntries.DataSource = dataRetrieval.getEntries(index).Tables[0];
             dataGridEntries.Refresh();
-            
+
 
             //if list is now empty, disable forms
             if (dataGridEntries.Rows.Count == 0)
@@ -284,31 +227,27 @@ namespace PasswordManager.WindowsApp
             //if list is not empty, load the result of the first entry
             else
             {
-                 
+
                 //get values of first in list
-                 for (int j = 0; j < dataGridEntries.Rows[0].Cells.Count; j++)
-                 {
-                        reloadValues.Add(dataGridEntries.SelectedRows[0].Cells[j].Value.ToString());
-                 }      
+                for (int j = 0; j < dataGridEntries.Rows[0].Cells.Count; j++)
+                {
+                    reloadValues.Add(dataGridEntries.SelectedRows[0].Cells[j].Value.ToString());
+                }
 
-                 //get data from entry and set it to form
-                 entryID = reloadValues[2];
-                 websiteUsername = reloadValues[1];
+                //get data from entry and set it to form
+                entryID = reloadValues[2];
+                websiteUsername = reloadValues[1];
 
-                 tbResultPassword.Text = dr.getWebsitePassword(entryID);
-                 tbResultUsername.Text = websiteUsername;
-                 comboCategoryResult.SelectedIndex = dr.getEntryCategory(entryID);
+                tbResultPassword.Text = dataRetrieval.getWebsitePassword(entryID);
+                tbResultUsername.Text = websiteUsername;
+                comboCategoryResult.SelectedIndex = dataRetrieval.getEntryCategory(entryID);
             }
 
             //hide text changed icons
             pbUsernameSave.Visible = false;
             pbPasswordSave.Visible = false;
             pbCategorySave.Visible = false;
-
         }
-
-
-
 
         //when the update button is pressed
         private void BtnUpdate_Click(object sender, EventArgs e)
@@ -394,7 +333,7 @@ namespace PasswordManager.WindowsApp
             //reload datasource
             userTextChange = false;
             int categoryIndex = comboCategorySort.SelectedIndex;
-            dataGridEntries.DataSource = dr.getEntries(categoryIndex).Tables[0];
+            dataGridEntries.DataSource = dataRetrieval.getEntries(categoryIndex).Tables[0];
             dataGridEntries.Refresh();
 
 
@@ -411,10 +350,6 @@ namespace PasswordManager.WindowsApp
             userTextChange = true;
         }
 
-
-
-
-
         //when user makes changes to text boxes text and combo box selection
         private void TbResultUsername_TextChanged(object sender, EventArgs e)
         {
@@ -425,10 +360,8 @@ namespace PasswordManager.WindowsApp
                 btnUpdate.Enabled = true;
                 btnCancel.Enabled = true;
             }
-            
+
         }
-
-
 
         //let user know that changes have not been saved yet
         private void TbResultPassword_TextChanged(object sender, EventArgs e)
@@ -441,9 +374,6 @@ namespace PasswordManager.WindowsApp
             }
         }
 
-
-
-
         //let user know that changes have not been saved yet
         private void ComboCategoryResult_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -455,19 +385,12 @@ namespace PasswordManager.WindowsApp
             }
         }
 
-
-
-
         //generate new random password for user
         private void btnGeneratePassword_Click(object sender, EventArgs e)
         {
             tbResultPassword.Text = gp.GenerateToken(50) + "-" + gp.GenerateToken(50) + "-" + gp.GenerateToken(50);
         }
 
-
-
-
-        //toggle hiding and showing password
         private void BtnHidePassword_Click(object sender, EventArgs e)
         {
             //increase hide counter every time the button is pressed
@@ -487,14 +410,8 @@ namespace PasswordManager.WindowsApp
                 String path = "..\\..\\Resources\\hide.png";
                 btnHidePassword.Image = Image.FromFile(path);
             }
-
         }
 
-
-
-
-
-        //when cancel button is pressed
         private void BtnCancel_Click(object sender, EventArgs e)
         {
 
@@ -524,9 +441,9 @@ namespace PasswordManager.WindowsApp
             string userID = Program.MyStaticValues.userID.ToString();
 
             //set username and password text boxes
-            tbResultPassword.Text = dr.getWebsitePassword(entryID);
+            tbResultPassword.Text = dataRetrieval.getWebsitePassword(entryID);
             tbResultUsername.Text = websiteUsername;
-            comboCategoryResult.SelectedIndex = dr.getEntryCategory(entryID);
+            comboCategoryResult.SelectedIndex = dataRetrieval.getEntryCategory(entryID);
 
             pbUsernameSave.Visible = false;
             pbPasswordSave.Visible = false;
@@ -534,15 +451,11 @@ namespace PasswordManager.WindowsApp
             btnCancel.Enabled = false;
             btnUpdate.Enabled = false;
         }
- 
-
-
-
 
         //when favorite button is clicked
         private void BtnFavorite_Click(object sender, EventArgs e)
         {
-
+            /*
             //increase hide counter every time the button is pressed
             favoriteCounter++;
 
@@ -560,9 +473,8 @@ namespace PasswordManager.WindowsApp
             }
 
             MessageBox.Show("Coming Soon");
-
+            */
         }
-
 
         //launch settings pane
         private void BtnSettings_Click(object sender, EventArgs e)
@@ -577,5 +489,7 @@ namespace PasswordManager.WindowsApp
             this.Close();
 
         }
-    }//end class
-}//end namespace
+
+        #endregion
+    }
+}

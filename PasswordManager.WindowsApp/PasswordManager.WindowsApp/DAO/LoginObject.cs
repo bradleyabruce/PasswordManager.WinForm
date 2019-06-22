@@ -8,6 +8,8 @@ namespace PasswordManager.WindowsApp.DAO
 {
     public class LoginObject
     {
+        #region Operators
+
         public LoginObject(string userID, string userLoginEmail, string userLoginPassword, bool status)
         {
             UserID = userID;
@@ -24,12 +26,15 @@ namespace PasswordManager.WindowsApp.DAO
             Status = null;
         }
 
+        #endregion
 
+        #region Properties
 
         public string UserID { get; set; }
         public string UserLoginEmail { get; set; }
         public string UserLoginPassword { get; set; }
         public bool? Status { get; set; }
 
+        #endregion
     }
 }

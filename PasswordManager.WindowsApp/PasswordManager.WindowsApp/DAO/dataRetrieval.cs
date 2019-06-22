@@ -2,20 +2,91 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Script.Serialization;
 
 namespace PasswordManager.WindowsApp.DAO
 {
-
     class dataRetrieval
     {
+        #region Variables
 
         dataLogin dl = new dataLogin();
-        dataDelete dd = new dataDelete();
+        DataUtilities dataUtility = new DataUtilities();
+        string retrieveUrl = "https://74.140.136.128:1337/api/retrieval";
 
+        #endregion
 
+        #region GetPasswords              
+
+        public async Task<List<PasswordObject>> getEntries(string userID, string categoryid)
+        {
+            string json = "{\"userid\": \"" + userID + "\", \"categoryid\": \"" + categoryid + "\"}";
+
+            HttpWebRequest request = await Task.Run(() => dataUtility.SendHttp(json, retrieveUrl));
+
+            //validate
+            if (request == null)
+            {
+                
+            }
+
+            List<PasswordObject> listOfPasswords = await Task.Run(() => ReceiveSignUpHttp(request));
+
+            //validate
+
+            return listOfPasswords;
+        }
+        
+        public List<PasswordObject> ReceiveSignUpHttp(HttpWebRequest request)
+        {
+            List<PasswordObject> listOfPasswords = new List<PasswordObject>();
+            string result = "";
+
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+            using (var streamReader = new StreamReader(response.GetResponseStream()))
+            {
+                result = streamReader.ReadToEnd();
+            }
+
+            if (result == @"""No Results""")
+            {
+                listOfPasswords.Clear();
+                PasswordObject noResultObject = new PasswordObject();
+                noResultObject.Status = "No Results";
+                listOfPasswords.Add(noResultObject);
+                return listOfPasswords;
+            }
+
+            else
+            {
+                try
+                {
+                    var serializer = new JavaScriptSerializer();
+                    listOfPasswords = serializer.Deserialize<List<PasswordObject>>(result);
+                }
+
+                catch (Exception Ex)
+                {
+                    listOfPasswords.Clear();
+                    PasswordObject failureObject = new PasswordObject();
+                    failureObject.Status = "Issue";
+                    listOfPasswords.Add(failureObject);
+                    return listOfPasswords;
+                }
+            }
+
+            return listOfPasswords;
+        }
+
+        #endregion
+
+        #region Garbage
 
         //gets all categories and returns them in a list    
         public List<string> getCategories()
@@ -27,7 +98,7 @@ namespace PasswordManager.WindowsApp.DAO
             string queryString = "SELECT [CategoryName] FROM[PasswordManager].[dbo].[tCategories]";
 
             //pass values to sql server
-            using (SqlConnection conn = new SqlConnection(dl.getConnectionString()))
+            using (SqlConnection conn = new SqlConnection(dataUtility.getConnectionString()))
             {
 
                 SqlCommand command = new SqlCommand(queryString, conn);
@@ -66,30 +137,7 @@ namespace PasswordManager.WindowsApp.DAO
             return catgories;
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                                    
 
 
         //get all entries of user logins and passwords
@@ -110,7 +158,7 @@ namespace PasswordManager.WindowsApp.DAO
             }
             
            
-            var dataAdapter = new SqlDataAdapter(query, dl.getConnectionString());
+            var dataAdapter = new SqlDataAdapter(query, dataUtility.getConnectionString());
 
             var commandBuilder = new SqlCommandBuilder(dataAdapter);
             var ds = new DataSet();
@@ -125,8 +173,6 @@ namespace PasswordManager.WindowsApp.DAO
 
 
 
-
-
         public string getWebsitePassword(string entryID)
         {
 
@@ -136,7 +182,7 @@ namespace PasswordManager.WindowsApp.DAO
             string queryString = "SELECT dbo.tWebsitePasswords.WebsitePassword, dbo.tEntries.EntryID FROM dbo.tEntries INNER JOIN dbo.tWebsitePasswords ON dbo.tEntries.WebsitePasswordID = dbo.tWebsitePasswords.WebsitePasswordID WHERE(dbo.tEntries.EntryID =" + entryID + ")";
 
             //pass values to sql server
-            using (SqlConnection conn = new SqlConnection(dl.getConnectionString()))
+            using (SqlConnection conn = new SqlConnection(dataUtility.getConnectionString()))
             {
 
                 SqlCommand command = new SqlCommand(queryString, conn);
@@ -188,7 +234,7 @@ namespace PasswordManager.WindowsApp.DAO
             string queryString = "SELECT CategoryID FROM dbo.tEntries WHERE(EntryID =" + entryID + ")";
 
             //pass values to sql server
-            using (SqlConnection conn = new SqlConnection(dl.getConnectionString()))
+            using (SqlConnection conn = new SqlConnection(dataUtility.getConnectionString()))
             {
 
                 SqlCommand command = new SqlCommand(queryString, conn);
@@ -232,12 +278,7 @@ namespace PasswordManager.WindowsApp.DAO
 
         }
 
-
-
+        #endregion
     }
-
-
-
-
 }
 

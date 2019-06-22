@@ -10,6 +10,7 @@ namespace PasswordManager.WindowsApp
     public partial class frmLogin : Form
     {
         dataLogin dataLogin = new dataLogin();
+        DataUtilities dataUtility = new DataUtilities();
 
         public frmLogin()
         {
@@ -22,7 +23,7 @@ namespace PasswordManager.WindowsApp
         private async void FrmLogin_Load(object sender, EventArgs e)
         {
 
-            bool databaseCheck = dataLogin.databaseCheck();
+            bool databaseCheck = dataUtility.databaseCheck();
 
             if (databaseCheck == true)
             {
@@ -77,7 +78,7 @@ namespace PasswordManager.WindowsApp
                 {
 
                     //hash password
-                    string hashedPass = dataLogin.EncodePassword(password);
+                    string hashedPass = dataUtility.EncodePassword(password);
 
                     Task<bool> loginAsync = dataLogin.loginToDatabase(username, hashedPass);
 
@@ -173,7 +174,7 @@ namespace PasswordManager.WindowsApp
                     {
 
                         //encrypt password 
-                        string hashedPass = dataLogin.EncodePassword(registerPassword1);
+                        string hashedPass = dataUtility.EncodePassword(registerPassword1);
 
                         Task<int> SignUpAsync = dataLogin.signUp(registerEmail, hashedPass);
 
@@ -238,6 +239,11 @@ namespace PasswordManager.WindowsApp
             btnRegisterPassword2Show.Image = Image.FromFile(path);
         }
 
+        private void Button1_Click(object sender, EventArgs e)
+        {
+            dataRetrieval dr = new dataRetrieval();
+            dr.getEntries("7", "0");
+        }
     }//end form
 
 }//end namespace

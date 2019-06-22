@@ -15,67 +15,9 @@ namespace PasswordManager.WindowsApp.DAO
     {
         #region Variables
 
+        DataUtilities dataUtility = new DataUtilities();
         public string loginUrl = "https://74.140.136.128:1337/api/login";
-        public string statusUrl = "https://74.140.136.128:1337/api/test";
         public string signUpUrl = "https://74.140.136.128:1337/api/signUp";
-
-        #endregion
-
-        #region Status
-
-
-        public bool databaseCheck()
-        {
-            TrustHttps.IgnoreBadCertificates();
-
-            try
-            {
-                string result;
-                Uri uri = CreateURI(statusUrl);
-
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
-                request.Method = "GET";
-
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-
-                using (var streamReader = new StreamReader(response.GetResponseStream()))
-                {
-                    result = streamReader.ReadToEnd();
-                }
-
-                if (result != "OK")
-                {
-                    return false;
-                }
-            }
-            catch (Exception e)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        //this class will retrieve database information from txt file
-        public string getConnectionString()
-        {
-            string connectionString = "";
-            try
-            {
-                string path = "..\\..\\..\\sqlServerConnection.txt";
-
-                using (StreamReader sr = new StreamReader(path))
-                {
-                    string stringFromFile = sr.ReadLine();
-                    connectionString = stringFromFile;
-                }
-            }
-            catch (Exception e)
-            {
-                return "File Not Found";
-            }
-            return connectionString;
-        }
 
         #endregion
 
@@ -90,7 +32,7 @@ namespace PasswordManager.WindowsApp.DAO
 
             string json = "{\"email\": \"" + email + "\", \"password\": \"" + hashedPassword + "\"}";
 
-            HttpWebRequest request = await Task.Run(() => SendHttp(json, loginUrl));
+            HttpWebRequest request = await Task.Run(() => dataUtility.SendHttp(json, loginUrl));
 
             //validate
             if (request == null)
@@ -131,31 +73,6 @@ namespace PasswordManager.WindowsApp.DAO
             }
         }
 
-        public HttpWebRequest SendHttp(string json, string url)
-        {
-
-            Uri uri = CreateURI(url);
-
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
-            request.Method = "POST";
-            request.ContentType = "application/json";
-
-            try
-            {
-                using (var streamWriter = new StreamWriter(request.GetRequestStream()))
-                {
-                    streamWriter.Write(json);
-                    streamWriter.Flush();
-                    streamWriter.Close();
-                }
-            }
-            catch (Exception e)
-            {
-                return null;
-            }
-
-            return request;
-        }
 
         public LoginObject ReceiveLoginHttp(HttpWebRequest request)
         {
@@ -193,7 +110,7 @@ namespace PasswordManager.WindowsApp.DAO
 
             string json = "{\"email\": \"" + email + "\", \"password\": \"" + hashedPassword + "\"}";
 
-            HttpWebRequest request = await Task.Run(() => SendHttp(json, signUpUrl));
+            HttpWebRequest request = await Task.Run(() => dataUtility.SendHttp(json, signUpUrl));
 
             //validate
             if (request == null)
@@ -244,41 +161,5 @@ namespace PasswordManager.WindowsApp.DAO
 
 
         #endregion
-
-        #region Utilities
-
-        public string EncodePassword(string password)
-        {
-
-            byte[] tempSource;
-            byte[] tempHash;
-
-            tempSource = UTF8Encoding.UTF8.GetBytes(password);
-
-            //compute hash
-            tempHash = new SHA1CryptoServiceProvider().ComputeHash(tempSource);
-
-            StringBuilder build = new StringBuilder(tempHash.Length);
-            for (int i = 0; i < tempHash.Length; i++)
-            {
-                build.Append(tempHash[i].ToString("X2"));
-            }
-
-            return build.ToString(); ;
-        }
-
-
-
-        public Uri CreateURI(string url)
-        {
-            Uri uri = new Uri(url);
-            var builder = new UriBuilder(uri);
-            builder.Port = 1337;
-            uri = builder.Uri;
-            return uri;
-        }
-
-        #endregion
-
     }
 }

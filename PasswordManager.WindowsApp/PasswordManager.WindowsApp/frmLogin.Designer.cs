@@ -54,6 +54,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.tbRegisterEmail = new System.Windows.Forms.TextBox();
+            this.button1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pbStatus)).BeginInit();
             this.tabControlLogin.SuspendLayout();
             this.tabLogin.SuspendLayout();
@@ -93,6 +94,7 @@
             // 
             // tabLogin
             // 
+            this.tabLogin.Controls.Add(this.button1);
             this.tabLogin.Controls.Add(this.btnShowLoginPassword);
             this.tabLogin.Controls.Add(this.lblLoginError);
             this.tabLogin.Controls.Add(this.label6);
@@ -289,6 +291,16 @@
             this.tbRegisterEmail.Size = new System.Drawing.Size(247, 20);
             this.tbRegisterEmail.TabIndex = 7;
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(204, 162);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 24;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.Button1_Click);
+            // 
             // frmLogin
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -335,6 +347,7 @@
         private System.Windows.Forms.Button btnShowLoginPassword;
         private System.Windows.Forms.Button btnRegisterPassword2Show;
         private System.Windows.Forms.Button btnRegisterPassword1Show;
+        private System.Windows.Forms.Button button1;
     }
 }
 

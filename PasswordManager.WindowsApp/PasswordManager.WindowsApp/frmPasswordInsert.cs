@@ -14,6 +14,7 @@ namespace PasswordManager.WindowsApp
         dataRetrieval dr = new dataRetrieval();
         dataInsert di = new dataInsert();
         generatePassword gp = new generatePassword();
+        DataUtilities dataUtility = new DataUtilities();
 
         int hideCounter = 1;
 
@@ -26,7 +27,7 @@ namespace PasswordManager.WindowsApp
 
         private void frmPasswordInsert_Load(object sender, EventArgs e)
         {
-            bool databaseCheck = dl.databaseCheck();
+            bool databaseCheck = dataUtility.databaseCheck();
            
             if (databaseCheck == true)
             {

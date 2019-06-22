@@ -21,8 +21,9 @@ namespace PasswordManager.WindowsApp
       dataLogin dl = new dataLogin();
       dataExport de = new dataExport();
       dataInsert da = new dataInsert();
+        DataUtilities dataUtility = new DataUtilities();
 
-      public frmSettings()
+        public frmSettings()
       {
          InitializeComponent();
       }
@@ -36,7 +37,7 @@ namespace PasswordManager.WindowsApp
          lblPasswordCount.Text = ds.getEntriesToDelete(Program.MyStaticValues.userID.ToString()).Count().ToString();
 
          //get serveraddress
-         string connString = dl.getConnectionString();
+         string connString = dataUtility.getConnectionString();
          string ip = connString.Split(':', ',')[1];
          lblServerAddress.Text = ip;
       }

@@ -12,7 +12,7 @@ namespace PasswordManager.WindowsApp.DAO
     {
 
         dataLogin dl = new dataLogin();
-
+        DataUtilities dataUtility = new DataUtilities();
 
         public string getCSVData(string userID)
         {
@@ -27,7 +27,7 @@ namespace PasswordManager.WindowsApp.DAO
             string queryString = "SELECT dbo.tWebsiteDomains.WebsiteDomain, dbo.tWebsiteUsername.WebsiteUsername, dbo.tWebsitePasswords.WebsitePassword FROM dbo.tEntries INNER JOIN dbo.tWebsiteDomains ON dbo.tEntries.WebsiteDomainID = dbo.tWebsiteDomains.WebsiteDomainID INNER JOIN dbo.tWebsitePasswords ON dbo.tEntries.WebsitePasswordID = dbo.tWebsitePasswords.WebsitePasswordID INNER JOIN dbo.tWebsiteUsername ON dbo.tEntries.WebsiteUsernameID = dbo.tWebsiteUsername.WebsiteUsernameID WHERE(dbo.tEntries.UserID = " + userID + ")";
 
             //pass values to sql server
-            using (SqlConnection conn = new SqlConnection(dl.getConnectionString()))
+            using (SqlConnection conn = new SqlConnection(dataUtility.getConnectionString()))
             {
 
                 SqlCommand command = new SqlCommand(queryString, conn);
