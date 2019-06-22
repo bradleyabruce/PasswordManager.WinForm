@@ -20,6 +20,7 @@ namespace PasswordManager.WindowsApp
         #region Variables
 
         string userID = Program.MyStaticValues.userID.ToString();
+        int DataGridIndex = 0;
         dataRetrieval dataRetrieval = new dataRetrieval();
         dataDelete dd = new dataDelete();
         dataUpdate du = new dataUpdate();
@@ -28,7 +29,7 @@ namespace PasswordManager.WindowsApp
         int favoriteCounter = 1;
 
         //this variable will determine whether the user is making a selection, or text is changing programatically
-        bool userTextChange = true;
+        bool userTextChange = false;
 
         #endregion
 
@@ -39,6 +40,9 @@ namespace PasswordManager.WindowsApp
             Task<List<PasswordObject>> entriesAsync = dataRetrieval.getEntries(userID, categoryID);
 
             //show loading icon...
+            pnlList.Enabled = false;
+            progressBar.Visible = true;
+            progressBar.MarqueeAnimationSpeed = 10;
 
             List<PasswordObject> entries = await entriesAsync;
 
@@ -75,7 +79,26 @@ namespace PasswordManager.WindowsApp
                         string[] rows = new string[] { passwordObject.EntryID, passwordObject.WebsiteDomain, passwordObject.WebsiteUsername, passwordObject.WebsitePassword, passwordObject.CategoryID };
                         dataGridEntries.Rows.Add(rows);
                     }
+
+                    //sort columns
+                    DataGridViewColumn sortColumn = dataGridEntries.Columns[1];
+                    dataGridEntries.Sort(sortColumn, ListSortDirection.Ascending);
+
+                    //set selected row (will be different during deletes)
+                    try
+                    {
+                        dataGridEntries.Rows[DataGridIndex - 1].Selected = true;
+                    }
+                    catch (Exception e)
+                    {
+                        dataGridEntries.Rows[0].Selected = true;
+                    }
+
+                    DataGridIndex = 0;
                 }
+                //hiding loading icon
+                pnlList.Enabled = true;
+                progressBar.Visible = false;
             }
         }
 
@@ -110,17 +133,12 @@ namespace PasswordManager.WindowsApp
             InitializeComponent();
         }
 
-        private async void FrmPasswordRetrieval_Load(object sender, EventArgs e)
+        private void FrmPasswordRetrieval_Load(object sender, EventArgs e)
         {
-            userTextChange = false;
-
-            //load categories
             comboCategorySort.DataSource = dataRetrieval.getCategories();
 
             RefreshDataGrid(userID, comboCategorySort.SelectedIndex.ToString());
-
             RefreshResultsPanel();
-
             userTextChange = true;
         }
 
@@ -128,24 +146,30 @@ namespace PasswordManager.WindowsApp
 
         #region Events
 
-
         public void ComboCategorySort_SelectedIndexChanged(object sender, EventArgs e)
         {
-            dataGridEntries.Rows.Clear();
-            dataGridEntries.Columns.Clear();
+            if (userTextChange == true)
+            {
+                dataGridEntries.Rows.Clear();
+                dataGridEntries.Columns.Clear();
 
-            //get ID of option selected and reload list from ID
-            string index = comboCategorySort.SelectedIndex.ToString();
+                //get ID of option selected and reload list from ID
+                string index = comboCategorySort.SelectedIndex.ToString();
 
-            RefreshDataGrid(userID, index);
-            RefreshResultsPanel();
+                RefreshDataGrid(userID, index);
+                RefreshResultsPanel();
+            }
+            else
+            {
+                //do nothing
+            }
         }
 
         private void DataGridEntries_SelectionChanged(object sender, EventArgs e)
         {
             RefreshResultsPanel();
         }
-                                 
+
         private void BtnCopyEmail_Click(object sender, EventArgs e)
         {
             if (tbResultUsername.Text == "" || tbResultUsername.Text == null)
@@ -157,7 +181,7 @@ namespace PasswordManager.WindowsApp
                 Clipboard.SetText(tbResultUsername.Text);
             }
         }
-                     
+
         //when the copy button is click, copy result to clipboard
         private void BtnCopyPassword_Click(object sender, EventArgs e)
         {
@@ -171,7 +195,7 @@ namespace PasswordManager.WindowsApp
             }
 
         }
-                          
+
         private void BtnAdd_Click(object sender, EventArgs e)
         {
             //create new form to open
@@ -182,71 +206,26 @@ namespace PasswordManager.WindowsApp
             //close login form
             this.Close();
         }
-                     
+
         //when the delete button is pressed
         private void BtnDelete_Click(object sender, EventArgs e)
         {
+            //get selected data
+            DataGridViewRow currentRow = dataGridEntries.SelectedRows[0];
+            string currentEntryID = currentRow.Cells[0].Value.ToString();
 
-            //get entry ID from selected text box
-            string entryID = "";
-            string websiteUsername = "";
+            int currentIndex = dataGridEntries.Rows.IndexOf(currentRow);
+            string currentCategoryID = comboCategorySort.SelectedIndex.ToString();
+            DataGridIndex = currentIndex;
 
-            List<string> cellValues = new List<string>();
-            List<string> reloadValues = new List<string>();
-
-            //loop through all selected rows
-            for (int i = 0; i < dataGridEntries.SelectedRows.Count; i++)
-            {
-
-                for (int j = 0; j < dataGridEntries.SelectedRows[i].Cells.Count; j++)
-                {
-                    cellValues.Add(dataGridEntries.SelectedRows[i].Cells[j].Value.ToString());
-                }
-
-            }
-
-            //delete from database
-            entryID = cellValues[2];
-            dd.deleteEntry(entryID);
+            dd.deleteEntry(currentEntryID);
 
             //reload list
-            int index = comboCategorySort.SelectedIndex;
-            dataGridEntries.DataSource = dataRetrieval.getEntries(index).Tables[0];
-            dataGridEntries.Refresh();
+            dataGridEntries.Rows.Clear();
+            dataGridEntries.Columns.Clear();
 
-
-            //if list is now empty, disable forms
-            if (dataGridEntries.Rows.Count == 0)
-            {
-                pnlResults.Enabled = false;
-                tbResultPassword.Text = "";
-                tbResultUsername.Text = "";
-                comboCategoryResult.DataSource = null;
-                //userTextChange = false;
-            }
-            //if list is not empty, load the result of the first entry
-            else
-            {
-
-                //get values of first in list
-                for (int j = 0; j < dataGridEntries.Rows[0].Cells.Count; j++)
-                {
-                    reloadValues.Add(dataGridEntries.SelectedRows[0].Cells[j].Value.ToString());
-                }
-
-                //get data from entry and set it to form
-                entryID = reloadValues[2];
-                websiteUsername = reloadValues[1];
-
-                tbResultPassword.Text = dataRetrieval.getWebsitePassword(entryID);
-                tbResultUsername.Text = websiteUsername;
-                comboCategoryResult.SelectedIndex = dataRetrieval.getEntryCategory(entryID);
-            }
-
-            //hide text changed icons
-            pbUsernameSave.Visible = false;
-            pbPasswordSave.Visible = false;
-            pbCategorySave.Visible = false;
+            RefreshDataGrid(userID, currentCategoryID);
+            RefreshResultsPanel();
         }
 
         //when the update button is pressed
@@ -351,24 +330,54 @@ namespace PasswordManager.WindowsApp
         }
 
         //when user makes changes to text boxes text and combo box selection
-        private void TbResultUsername_TextChanged(object sender, EventArgs e)
+        private void TbResult_TextChanged(object sender, EventArgs e)
         {
+            TextBox currentTextBox = (TextBox)sender as TextBox;
+            string senderName = currentTextBox.Name;
+            bool usernameChange = false;
+            bool passwordChange = false;
 
-            if (userTextChange == true)
+            DataGridViewRow currentRow = dataGridEntries.SelectedRows[0];
+            string currentUserName = currentRow.Cells[2].Value.ToString();
+            string currentPassword = currentRow.Cells[3].Value.ToString();
+
+            if(senderName == "tbResultUsername")
             {
-                pbUsernameSave.Visible = true;
+                if (currentTextBox.Text != currentUserName)
+                {
+                    usernameChange = true;
+                }
+                else
+                {
+                    usernameChange = false;
+                }
+            }
+
+            if (senderName == "tbResultPassword")
+            {
+                if (currentTextBox.Text != currentPassword)
+                {
+                    passwordChange = true;
+                }
+                else
+                {
+                    passwordChange = false;
+                }
+            }
+
+            if(usernameChange == true) pbUsernameSave.Visible = true;
+            else pbUsernameSave.Visible = false;
+
+            if(passwordChange == true) pbPasswordSave.Visible = true;
+            else pbPasswordSave.Visible = false;
+
+            if (usernameChange == true || passwordChange == true || pbCategorySave.Visible == true)
+            {
                 btnUpdate.Enabled = true;
                 btnCancel.Enabled = true;
             }
-
-        }
-
-        //let user know that changes have not been saved yet
-        private void TbResultPassword_TextChanged(object sender, EventArgs e)
-        {
-            if (userTextChange == true)
+            else
             {
-                pbPasswordSave.Visible = true;
                 btnUpdate.Enabled = true;
                 btnCancel.Enabled = true;
             }
@@ -377,9 +386,31 @@ namespace PasswordManager.WindowsApp
         //let user know that changes have not been saved yet
         private void ComboCategoryResult_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (userTextChange == true)
+            DataGridViewRow currentRow = dataGridEntries.SelectedRows[0];
+            string currentCategoryID = currentRow.Cells[4].Value.ToString();
+
+            string newCategoryID = comboCategoryResult.SelectedIndex.ToString();
+            bool categoryChange = false;
+
+            if (currentCategoryID != newCategoryID)
             {
-                pbCategorySave.Visible = true;
+                categoryChange = true;
+            }
+            else
+            {
+                categoryChange = false;
+            }
+
+            if (categoryChange == true) pbCategorySave.Visible = true;
+            else pbCategorySave.Visible = false;
+
+            if(categoryChange == true || pbUsernameSave.Visible == true || pbPasswordSave.Visible == true)
+            {
+                btnUpdate.Enabled = true;
+                btnCancel.Enabled = true;
+            }
+            else
+            {
                 btnUpdate.Enabled = true;
                 btnCancel.Enabled = true;
             }
