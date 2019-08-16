@@ -104,7 +104,7 @@ namespace PasswordManager.WindowsApp
             //after selection export the data
             if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
             {
-
+                    /*
                //set path of file
                string path = fbd.SelectedPath + "\\Passwords.csv";
 
@@ -131,7 +131,7 @@ namespace PasswordManager.WindowsApp
                }
 
                MessageBox.Show("Export Successful!");
-
+               */
             }
          }
       }
