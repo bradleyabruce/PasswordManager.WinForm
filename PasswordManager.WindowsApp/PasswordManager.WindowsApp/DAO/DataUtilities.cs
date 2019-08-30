@@ -75,7 +75,7 @@ namespace PasswordManager.WindowsApp.DAO
             try
             {
                 string result;
-                Uri uri = CreateURI("https://74.140.136.128:1337/api/test");
+                Uri uri = CreateURI("https://174.101.154.93:1337/api/test");
 
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
                 request.Method = "GET";

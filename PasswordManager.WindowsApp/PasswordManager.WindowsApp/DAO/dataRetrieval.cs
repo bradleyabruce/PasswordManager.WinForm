@@ -13,8 +13,8 @@ namespace PasswordManager.WindowsApp.DAO
 
         dataLogin dl = new dataLogin();
         DataUtilities dataUtility = new DataUtilities();
-        string retrieveUrl = "https://74.140.136.128:1337/api/entryRetrieval";
-        string categoryUrl = "https://74.140.136.128:1337/api/categoryRetrieval";
+        string retrieveUrl = "https://174.101.154.93:1337/api/entryRetrieval";
+        string categoryUrl = "https://174.101.154.93:1337/api/categoryRetrieval";
 
         #endregion
 

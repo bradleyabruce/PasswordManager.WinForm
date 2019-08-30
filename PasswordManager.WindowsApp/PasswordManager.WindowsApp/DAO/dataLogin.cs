@@ -13,8 +13,8 @@ namespace PasswordManager.WindowsApp.DAO
         #region Variables
 
         DataUtilities dataUtility = new DataUtilities();
-        public string loginUrl = "https://74.140.136.128:1337/api/login";
-        public string signUpUrl = "https://74.140.136.128:1337/api/signUp";
+        public string loginUrl = "https://174.101.154.93:1337/api/login";
+        public string signUpUrl = "https://174.101.154.93:1337/api/signUp";
 
         #endregion
 
